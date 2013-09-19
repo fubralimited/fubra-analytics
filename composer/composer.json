@@ -1,0 +1,12 @@
+{   
+    "autoload": {
+        "psr-0": {
+            "FA": "../lib"
+        }
+    },
+
+    "require": {
+        "slim/slim": "2.*",
+        "j4mie/idiorm": "v1.2.3"
+    }
+}

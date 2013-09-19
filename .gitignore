@@ -1,0 +1,11 @@
+.DS_Store
+vendor/
+composer.lock
+config.ini
+temp/
+temp_*
+*.temp
+*.csv
+*.log
+logs/
+old/
