@@ -1,26 +1,21 @@
 <?php
 
-// Get configuration.ini file
-$config = parse_ini_file( '../config.ini' );
-
 // Autoload Composer modules
 require dirname(__DIR__) . '/composer/vendor/autoload.php';
 
+// Get configuration.ini file
+$config = parse_ini_file( '../config.ini' );
+
 // Create new Slim instance
-$api = new \Slim\Slim( array(
+$app = new \Slim\Slim( array(
 
 		// Toggle debug
 		'debug' => $config['debug'],
 		'log.enabled' => $config['debug']
 	) );
 
-// -------------------------------------------------------------------
-// 				  Load middleware in order to execute
-// -------------------------------------------------------------------
-
-// Use ORM Middleware
-// $api->add( new \FA\DB( $config ) );
-
+// Configure idiorm DB instance
+new \FA\DB( $config );
 
 // -------------------------------------------------------------------
 //        					   Routes
@@ -30,7 +25,7 @@ $api = new \Slim\Slim( array(
  * Route: 404
  * Not found handler
  */
-$api->notFound( function () {
+$app->notFound( function () {
 
 		// Respond with empty/invalid data
 		echo 'Oops. Not Found.';
@@ -43,14 +38,13 @@ $api->notFound( function () {
  * Route: /airport/code/$code
  * Returns airport by code
  */
-$api->get( '/', function () {
+$app->get( '/', function () use ( $app ) {
 
-		// Respond with custom error
-		echo 'Welcome!';
+		echo 'Welcome';
 
 	} );
 
 // -------------------------------------------------------------------
 
 // Run Slim app
-$api->run();
+$app->run();
