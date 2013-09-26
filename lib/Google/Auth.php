@@ -1,82 +1,86 @@
 <?php
 
-// Load Google Client lib
-require_once 'google-api-php-client/src/Google_Client.php';
-require_once 'google-api-php-client/src/contrib/Google_AnalyticsService.php';
+namespace GA;
 
-// Get config
-$config = parse_ini_file( dirname(__DIR__) . '/config.ini' );
+use \FA\Options;
+use \FA\Config;
 
-session_start();
+/**
+* Google API oAuth class
+*/
+class Auth {
 
-$client = new Google_Client ();
-$client->setApplicationName ( "Fubra Analytics" );
-$client->setClientId ( "1055043447351.apps.googleusercontent.com" );
-$client->setClientSecret ( "Ms3iSUA1UJNSxN2PaP6pwm8A" );
-$client->setRedirectUri ( "http://localhost" );
+    /**
+     * Goole api client object
+     * @var object
+     */
+    public $client;
 
-$client->setDeveloperKey('AIzaSyCOtIwheFQp5ofVrylpPO6A5UN9DW-iuX4');
-$client->setScopes(array('https://www.googleapis.com/auth/analytics.readonly'));
+    /**
+     * OAuth success status
+     * @var  bool [description]
+     */
+    public $success;
 
-// Magic. Returns objects from the Analytics Service instead of associative arrays.
-$client->setUseObjects(true);
+    /**
+     * Authenticates client and manages storing of the auth token
+     */
+    function __construct() {
 
-if (isset($_GET['code'])) {
+        // Create new FA Options instance
+        $options = new \FA\Options();
 
-    $client->authenticate();
-    $_SESSION['token'] = $client->getAccessToken();
-    $redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-    header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
-}
+        // Get token if set in db options
+        $oauth_token = $options->get('oauth_token');
 
-if (isset($_SESSION['token'])) {
+        // Get configuration
+        $config = new \FA\Config();
 
-    $client->setAccessToken($_SESSION['token']);
-}
+        // Set GA api vars
+        $this->client = new \Google_Client ();
+        $this->client->setApplicationName( $config->analytics['product_name'] );
+        $this->client->setClientId ( $config->analytics['client_id'] );
+        $this->client->setClientSecret ( $config->analytics['client_secret'] );
+        $this->client->setRedirectUri ( $config->analytics['redirect_uri'] );
+        $this->client->setDeveloperKey( $config->analytics['api_key'] );
+        $this->client->setScopes( array('https://www.googleapis.com/auth/analytics.readonly') );
 
-if (!$client->getAccessToken()) {
-  
-    $authUrl = $client->createAuthUrl();
-    print "<a class='login' href='$authUrl'>Log In</a>";
+        // With offline access
+        $this->client->setAccessType ( "offline" );
 
-} else {
-  
-    $service = new \Google_AnalyticsService ( $client );
+        // If redirected from oAuth use code param and get token
+        if (isset($_GET['code'])) {
 
-    // // Getting the profile list from the API
-    // $profiles = $service->management_profiles->listManagementProfiles ( "~all", "~all" );
+            $this->client->authenticate();
+            $oauth_token = $this->client->getAccessToken();
+        }
 
-    // foreach ($profiles->items as $item) {
-    //     echo '<pre>';
-    //     print_r($item);
-    //     echo '</pre>--------------------------------------------------------------------------------------------------------------';
-    // }
+        // If token is available, set on client and store in db options
+        if ( $oauth_token ) {
 
-    $profiles = $service->management_profiles->listManagementProfiles ( "~all", "~all" );
-    $profileList = array ();
-    
-    foreach ( $profiles->items as $profile ) $profileList[] = $profile->id;
+            // Set on client
+            $this->client->setAccessToken($oauth_token);
 
-    // Getting data per website/day/page
-    $analyticsData = array ();
+            // Store auth token
+            $options->set('oauth_token', $oauth_token);
 
-    foreach ( $profileList as $websiteId => $profileId ) {
-        
-        $ids = "ga:$profileId";
+            $this->success = true;
+        }
 
-        $start_date = "2013-04-01";
-        $end_date = "2013-04-10";
-        $metrics = "ga:visits,ga:pageviews";
+        // Check if token was set successfully and if not clear field from db
+        if (!$this->client->getAccessToken()) {
 
-        $data = $service->data_ga->get ( $ids, $start_date, $end_date, $metrics );
-        foreach ( $data->rows as $row ) {
-
-            echo '<pre>';
-            print_r($row);
-            echo '</pre>';
+            $options->delete('oauth_token');
+            $this->success = false;
         }
     }
 
-}
+    /**
+     * Return OAuth login url
+     * @return string OAuth url
+     */
+    public function get_auth_url() {
 
-require 'view.html';
+        return $this->client->createAuthUrl();
+    }
+}

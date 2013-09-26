@@ -6,7 +6,7 @@ namespace FA;
 use \ORM;
 
 /**
- * Simple static class for managing options
+ * Simple class for managing options
  */
 class Options {
 
@@ -15,7 +15,7 @@ class Options {
      * @param string $key Option name
      * @param string $val Option value
      */
-    public static function set($key, $val) {
+    public function set($key, $val) {
 
         // Get option
         $option = ORM::for_table('options')->where('key', $key)->find_one();
@@ -39,10 +39,13 @@ class Options {
      * @param string $key Option name
      * @return string Option value or false if not found
      */
-    public static function get($key) {
+    public function get($key) {
 
         // Return option or false
-        return ORM::for_table('options')->where('key', $key)->find_one()->value;
+        $row = ORM::for_table('options')->where('key', $key)->find_one();
+
+        // Return value col if row was found
+        return $row ? $row->value : false;
     }
     
     /**
@@ -50,7 +53,7 @@ class Options {
      * @param string $key Option name
      * @return BOOL Whether option was deleted
      */
-    public static function delete($key) {
+    public function delete($key) {
 
         // Get option & delete if set
         $option = ORM::for_table('options')->where('key', $key)->find_one();
@@ -63,7 +66,7 @@ class Options {
      * @param string $key Option name
      * @return datetime Last modified time or false if not found
      */
-    public static function modified($key) {
+    public function modified($key) {
 
         // Get option time last modified
         return ORM::for_table('options')->where('key', $key)->find_one()->modified;

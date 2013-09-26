@@ -4,43 +4,45 @@
 require dirname(__DIR__) . '/composer/vendor/autoload.php';
 
 // Get configuration.ini file
-$config = parse_ini_file( '../config.ini' );
+$config = new \FA\Config();
+
+// Set timezone
+date_default_timezone_set($config->timezone);
 
 // Create new Slim instance
 $app = new \Slim\Slim( array(
 
-		// Toggle debug
-		'debug' => $config['debug'],
-		'log.enabled' => $config['debug']
+		// Configure slim app
+		'debug'          => $config->debug,
+		'log.enabled'    => $config->debug,
+		'templates.path' => 'views',
 	) );
 
-// Configure idiorm DB instance
-new \FA\DB( $config );
+// Add Init Middleware
+$app->add(new \FA\Init( $config ));
 
-// -------------------------------------------------------------------
-//        					   Routes
-// -------------------------------------------------------------------
+/**
+ * Single route that checks first param as controller.
+ * If the controller doesn't exist it simply goes to the 404 route handler
+ */
+$app->get( '/(:main)', function ($main = 'index') use ( $app ) {
+
+		// Form route controller name
+		$routeCtrl = "routes/{$main}.php";
+
+		// If controller exists include it else pass to 404
+		file_exists($routeCtrl) ? require($routeCtrl) : $app->pass();
+
+	} );
 
 /**
  * Route: 404
  * Not found handler
  */
-$app->notFound( function () {
+$app->notFound( function () use ( $app ) {
 
 		// Respond with empty/invalid data
-		echo 'Oops. Not Found.';
-
-	} );
-
-// -------------------------------------------------------------------
-
-/**
- * Route: /airport/code/$code
- * Returns airport by code
- */
-$app->get( '/', function () use ( $app ) {
-
-		echo 'Welcome';
+		$app->render( '404.php' );
 
 	} );
 

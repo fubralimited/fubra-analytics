@@ -1,8 +1,6 @@
 {   
     "autoload": {
-        "psr-0": {
-            "FA": "../lib/FA/"
-        }
+        "classmap": ["../lib/"]
     },
 
     "require": {
