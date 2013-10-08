@@ -2,6 +2,7 @@
 
 namespace GA;
 
+use \Google_Client;
 use \FA\Options;
 use \FA\Config;
 
@@ -28,17 +29,17 @@ class Auth {
     function __construct() {
 
         // Create new FA Options instance
-        $options = new \FA\Options();
+        $options = new Options();
 
         // Get token if set in db options
         $oauth_token = $options->get('oauth_token');
 
         // Get configuration
-        $config = new \FA\Config();
+        $config = new Config();
 
         // Set GA api vars
-        $this->client = new \Google_Client ();
-        $this->client->setApplicationName( $config->analytics['product_name'] );
+        $this->client = new Google_Client ();
+        $this->client->setApplicationName( $config->product_name );
         $this->client->setClientId ( $config->analytics['client_id'] );
         $this->client->setClientSecret ( $config->analytics['client_secret'] );
         $this->client->setRedirectUri ( $config->analytics['redirect_uri'] );
@@ -79,8 +80,12 @@ class Auth {
      * Return OAuth login url
      * @return string OAuth url
      */
-    public function get_auth_url() {
+    public static function get_auth_url() {
 
-        return $this->client->createAuthUrl();
+        // Create instance of self
+        $inst = new self();
+
+        // Return auth url
+        return $inst->client->createAuthUrl();
     }
 }

@@ -3,7 +3,6 @@
 namespace FA;
 
 use \ORM;
-use \FA\Config;
 
 class Init extends \Slim\Middleware
 {
@@ -20,7 +19,7 @@ class Init extends \Slim\Middleware
     public function __construct() {
 
         // Ref configuration
-        $this->config = new \FA\Config();
+        $this->config = new Config();
 
         // Initialise database
         $this->initIdiorm();
@@ -36,7 +35,7 @@ class Init extends \Slim\Middleware
         $this->app->config = $this->config;
 
         // Add instance of \FA\Options to app instance
-        $this->app->option = new \FA\Options();
+        $this->app->option = new Options();
 
         // Continue app routing
         $this->next->call();
@@ -60,10 +59,10 @@ class Init extends \Slim\Middleware
         ORM::configure( 'driver_options', array( \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8' ) );
         ORM::configure( 'error_mode', ( $this->config->debug ? \PDO::ERRMODE_WARNING : false ) );
 
-        // API consists of reads only, so enable simple memory cache
-        ORM::configure( 'caching', $this->config->debug );
+        // Idiorm caching can cause stale results, so keep it off
+        ORM::configure( 'caching', false );
 
-        // Enable result sets
+        // Enable result sets (objects)
         ORM::configure( 'return_result_sets', true );
 
         // Debugging exsposes:

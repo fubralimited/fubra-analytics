@@ -1,13 +1,25 @@
 <?php
 
-$ga_auth = new \GA\Auth();
-
-$authUrl = $ga_auth->get_auth_url();
-
-$ga_data = new \GA\Data($ga_auth->client);
-
-$ga_data->update_report_visits();
+// Create new data instance
+$api = new \GA\API();
 
 
+$data = 'some data';
 
-$app->render('index.php', array( 'host' => $authUrl, 'data' => null ));
+
+// Check data object is good to go
+if ( $api->authenticated ) {
+    
+    $data = $api->get('2013-04-13');
+}
+
+
+
+
+
+$app->render('index.php', array(
+
+        'host' => \GA\Auth::get_auth_url(),
+        'data' => $data
+
+    ));
