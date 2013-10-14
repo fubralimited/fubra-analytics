@@ -64,7 +64,7 @@ class Data {
     /**
      * Creates a new service object from the authorised GA client
      */
-    function __construct() {
+    function __construct($client = NULL) {
 
         // Get config instance
         $this->config = new Config();
@@ -72,8 +72,11 @@ class Data {
         // New options instance
         $this->options = new Options();
 
-        // Perform authentication
-        if ( $client = $this->authenticate() ) {
+        // Get cient if not passed in
+        if ( ! $client ) $client = $this->authenticate();
+
+        // Create service if authentication is ok
+        if ( $client ) {
     
             // Create new google service from authenticated client            
             $this->service = new Google_AnalyticsService ( $client );
@@ -104,7 +107,7 @@ class Data {
             mail(
 
                 $this->config->owner,
-                $this->config->app_name . ' auth failure',
+                $this->config->product_name . ' auth failure',
                 'Google APIs could not authenticate for offline mode. Please visit site now to update analytics stats.'
             );
 
@@ -328,12 +331,13 @@ class Data {
 
     /**
      * Get all profiles that has not been marked ignored
+     * @param bool $ignored Bool to incude ignored profiles. Default false
      * @return array Valid profiles
      */
-    private static function get_profiles() {
+    public static function get_profiles($ignored = false) {
 
         $profiles = ORM::for_table('profiles')
-            ->where( 'ignored', false )
+            ->where( 'ignored', $ignored )
             ->find_array();
 
         return $profiles;

@@ -12,6 +12,18 @@ use \FA\Config;
 class Auth {
 
     /**
+     * FA Options instance
+     * @var object
+     */
+    private $options;
+
+    /**
+     * OAuth token
+     * @var string
+     */
+    private $token;
+
+    /**
      * Goole api client object
      * @var object
      */
@@ -24,15 +36,22 @@ class Auth {
     public $success;
 
     /**
+     * Marks token as new
+     * A new token indicates the client isn't fit for use and must be recreated
+     * @var boolean
+     */
+    private $is_new = false;
+
+    /**
      * Authenticates client and manages storing of the auth token
      */
     function __construct() {
 
         // Create new FA Options instance
-        $options = new Options();
+        $this->options = new Options();
 
         // Get token if set in db options
-        $oauth_token = $options->get('oauth_token');
+        $this->token = $this->options->get('oauth_token');
 
         // Get configuration
         $config = new Config();
@@ -50,30 +69,49 @@ class Auth {
         $this->client->setAccessType ( "offline" );
 
         // If redirected from oAuth use code param and get token
+        // Also mark token as new to ensure the client gets unset
         if (isset($_GET['code'])) {
 
             $this->client->authenticate();
-            $oauth_token = $this->client->getAccessToken();
+            $this->token = $this->client->getAccessToken();
+
+            $this->is_new = true;
         }
 
         // If token is available, set on client and store in db options
-        if ( $oauth_token ) {
+        if ( $this->token ) {
 
             // Set on client
-            $this->client->setAccessToken($oauth_token);
+            $this->client->setAccessToken($this->token);
 
-            // Store auth token
-            $options->set('oauth_token', $oauth_token);
-
-            $this->success = true;
+            // Store token
+            $this->set_token($this->token);
         }
 
         // Check if token was set successfully and if not clear field from db
-        if (!$this->client->getAccessToken()) {
+        if (!$this->client->getAccessToken()) $this->sign_out();
 
-            $options->delete('oauth_token');
-            $this->success = false;
-        }
+        // Unset client to ensure it's not used to create a new service
+        // A new auth instance must be created for use with a service if new access token is received
+        if( $this->is_new ) $this->client = NULL;
+
+    }
+
+    private function set_token() {
+
+        // Store auth token
+        $this->options->set('oauth_token', $this->token);
+
+        $this->success = true;
+
+    }
+
+    public function sign_out () {
+
+        // Delete token from db
+        $this->options->delete('oauth_token');
+
+        $this->success = false;
     }
 
     /**

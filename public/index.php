@@ -22,18 +22,57 @@ $app = new \Slim\Slim( array(
 $app->add(new \FA\Init( $config ));
 
 /**
- * Single route that checks first param as controller.
+ * Google oath redirect url.
+ * Simply create a auth instance (which will handle the token) and then redirect to index.
+ */
+$app->get('/auth', function() use ( $app ) {
+
+	// Redirect home
+	$app->redirect('/');
+});
+
+/**
+ * Google oath sign out.
+ * Simply delete auth token and redirect to index.
+ */
+$app->get('/signout', function() use ( $app ) {
+
+	// Sign out
+	$app->auth->sign_out();
+
+	// Redirect home
+	$app->redirect('/');
+});
+
+/**
+ * Single route (GET or POST) that checks first param as controller.
  * If the controller doesn't exist it simply goes to the 404 route handler
  */
-$app->get( '/(:main)', function ($main = 'index') use ( $app ) {
+$app->map( '/(:main(/(:sub(/))))', function ($main = 'dashboard', $sub = 'index') use ( $app ) {
 
-		// Form route controller name
-		$routeCtrl = "routes/{$main}.php";
+		// Get template name
+		$template = "{$main}/{$sub}.php";
 
-		// If controller exists include it else pass to 404
-		file_exists($routeCtrl) ? require($routeCtrl) : $app->pass();
+		// If view doesn't exist, pass route. Next route should then be 404
+		if( ! file_exists("views/{$main}/{$sub}.php") ) $app->pass();
 
-	} );
+		// Render view
+		$app->render("index.php", array(
+
+				// Pass app instance
+				'app' => $app,
+
+				// Pass route parts
+				'route' => array(
+
+				        'template' => $template,
+        		        'main' => $main,
+        		        'sub' => $sub
+					)
+
+		    ));
+	// Set to accept both get and post
+	} )->via('GET', 'POST');;
 
 /**
  * Route: 404
@@ -41,8 +80,21 @@ $app->get( '/(:main)', function ($main = 'index') use ( $app ) {
  */
 $app->notFound( function () use ( $app ) {
 
-		// Respond with empty/invalid data
-		$app->render( '404.php' );
+		// Render view
+		$app->render("index.php", array(
+
+				// Pass app instance
+				'app' => $app,
+
+				// Pass route parts
+				'route' => array(
+
+				        'template' => '404.php',
+        		        'main' => '404',
+        		        'sub' => NULL
+					)
+
+		    ));
 
 	} );
 
