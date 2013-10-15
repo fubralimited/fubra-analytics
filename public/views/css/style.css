@@ -48,4 +48,12 @@ a.auth_button{
   width: 300px;
 }
 
+#profiles-table tr.profile {
 
+  border-right: 5px solid green;
+}
+
+#profiles-table tr.profile.ignored {
+
+  border-right: 5px solid red;
+}

@@ -14,6 +14,8 @@
 ### TODO:
 ---
 
+Change auth to use single instance like WP plugins and then remove passing in the client
+
 Find way of managing profiles
     
 	- Maybe set all profiles to updated = no then yes once updated and go on that only.

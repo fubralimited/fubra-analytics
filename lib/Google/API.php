@@ -76,6 +76,29 @@ class API extends Data {
         return $name->name;
     }
 
+    /**
+     * Return the toatl `visits` of a profile.
+     * Duplicate/unused profiles will have 0 vists, so can be excluded
+     * @param  int $profile Profile id
+     * @return int          Total visits.
+     */
+    public function get_total_visits($profile)
+    {
+        
+        $visits = ORM::for_table('analytics_total')
+            ->raw_query('SELECT SUM(`visits`) FROM `analytics_total` WHERE `profile_id` = :id', array( 'id' => $profile ))
+            ->find_one()->as_array();
+
+        // Check if any visits was found
+        $visits_total = $visits['SUM(`visits`)'] ? $visits['SUM(`visits`)'] : 0;
+
+        return $visits_total;
+    }
+
+    /**
+     * Updates profile groups
+     * @param  array $profile_groups POST array of profile_id => group_id
+     */
     public function update_groups( $profile_groups ) {
         
         foreach ($profile_groups as $profile_id => $group_id) {
@@ -83,10 +106,12 @@ class API extends Data {
             // Convert group_id to int or NULL
             $group_id = $group_id ? (int)$group_id : NULL;
             
+            // Get profile
             $profile = ORM::for_table('profiles')
                 ->where('id', $profile_id)
                 ->find_one();
 
+            // Check profile group is updated
             if ( $profile->group != $group_id) {
                 
                 $profile->group = $group_id;
@@ -140,6 +165,41 @@ class API extends Data {
 
         // If no group found simply return false
         return false;
+    }
+
+    /**
+     * Update profiles' ignored value
+     * @param  array $profiles_ignored Array of posts to be ignored only. $id => truthy
+     */
+    public function update_ignored($profiles_ignored) {
+        
+        // Get all profiles
+        $profiles = $this->get_profiles(true);
+
+        // Loop profiles
+        foreach ($profiles as $profile) {
+            
+            $profile = ORM::for_table('profiles')
+                ->where('id', $profile['id'])
+                ->find_one();
+
+            // Check if profile is set to be ignored
+            $is_ignored = isset($profiles_ignored[$profile->id]);
+
+            // Update if changed to be ignored
+            if ( ! $profile->ignored && $is_ignored ) {
+                
+                $profile->ignored = 1;
+                $profile->save();
+            
+            // Change if set to no longer be ignored
+            } elseif ( $profile->ignored && ! $is_ignored ) {
+                
+                $profile->ignored = 0;
+                $profile->save();
+            }
+        }
+
     }
 
     /**

@@ -4,7 +4,9 @@ $(function(){
     var groupFilterEl     = $('#group_filter'),
         profileFilterEl   = $('#profile_filter')
         profilesTableEl   = $('#profiles-table'),
-        profileRowsEl     = $('#profiles-table tr.profile');
+        profileRowsEl     = $('#profiles-table tr.profile'),
+        visitsFilterEl    = $('.profiles .visits-filter button'),
+        selectAllEl       = $('.select-all button');
 
     // Filter on both value change (select) and keyup (typing profile filter)
     $('#group_filter, #profile_filter').on( 'change keyup', function() {
@@ -47,9 +49,34 @@ $(function(){
         });
     });
 
+    
+    // Toggles between profiles with or without visits
+    visitsFilterEl.click(function(){
 
+        // Toggle Button state
+        visitsFilterEl.toggleClass('hidden');
 
+        // Show or hide profiles
+        $('tr.visited').toggle();
 
+        // Prevent submit
+        return false;
+    });
+
+    // Check or uncheck all visible profiles
+    selectAllEl.click(function(){
+
+        // Toggle Button state
+        selectAllEl.toggleClass('hidden');
+        selectAllEl.parent().toggleClass('selected');
+
+        // Check all visible buttons
+        var check = selectAllEl.parent().hasClass('selected');
+        $('tr.profile:visible .checkbox input').prop('checked', check);
+
+        // Prevent submit
+        return false;
+    });
 
 
 });

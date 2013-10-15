@@ -43,9 +43,15 @@ class Auth {
     private $is_new = false;
 
     /**
+     * Instance of this class.
+     * @var object
+     */
+    private static $instance = null;
+
+    /**
      * Authenticates client and manages storing of the auth token
      */
-    function __construct() {
+    private function __construct() {
 
         // Create new FA Options instance
         $this->options = new Options();
@@ -95,6 +101,21 @@ class Auth {
         // A new auth instance must be created for use with a service if new access token is received
         if( $this->is_new ) $this->client = NULL;
 
+    }
+
+    /**
+     * Return an instance of this class.
+     * Used instead of constructor to avoid multiple auth instances
+     * @return object A single instance of this class.
+     */
+    public static function get_instance() {
+
+        // If the single instance hasn't been set, set it now.
+        if ( null == self::$instance ) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 
     private function set_token() {

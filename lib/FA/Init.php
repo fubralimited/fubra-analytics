@@ -40,12 +40,11 @@ class Init extends \Slim\Middleware
         // Add instance of \FA\Options to app instance
         $this->app->option = new Options();
 
-        // Check app is authenticated
-        $this->app->auth = new Auth();
+        // Get app auth instance
+        $this->app->auth = Auth::get_instance();
 
-        // Create new api instance and pass auth client
-        // If auth cliet isn't passed to api a second auth instance will be created by the api which can lead to some proeblems
-        $this->app->api = new API($this->app->auth->client);
+        // Create new api instance
+        $this->app->api = new API();
 
         // Continue app routing
         $this->next->call();

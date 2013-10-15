@@ -64,7 +64,7 @@ class Data {
     /**
      * Creates a new service object from the authorised GA client
      */
-    function __construct($client = NULL) {
+    function __construct() {
 
         // Get config instance
         $this->config = new Config();
@@ -72,8 +72,8 @@ class Data {
         // New options instance
         $this->options = new Options();
 
-        // Get cient if not passed in
-        if ( ! $client ) $client = $this->authenticate();
+        // Get auth client
+        $client = $this->authenticate();
 
         // Create service if authentication is ok
         if ( $client ) {
@@ -98,7 +98,7 @@ class Data {
     private function authenticate() {
 
         // Get Google Auth class
-        $ga_auth = new Auth();
+        $ga_auth = Auth::get_instance();
 
         // Check if api authenticated succesfully
         if ( ! $ga_auth->success) {
@@ -259,7 +259,7 @@ class Data {
             $id = "ga:{$profile['id']}";
 
             // Api resonse data
-            $metrics = NULL;
+            $metric = NULL;
 
             // Track number of api errors
             $api_errors = array();
@@ -286,6 +286,8 @@ class Data {
             // Store metrics in database if avaialble
             if ($metric) $this->store_metric( $metric );
         }
+
+        sleep(1);
 
         // Return only errors if any
         return $api_errors;
@@ -336,11 +338,15 @@ class Data {
      */
     public static function get_profiles($ignored = false) {
 
-        $profiles = ORM::for_table('profiles')
-            ->where( 'ignored', $ignored )
-            ->find_array();
+        // Set table
+        $p = ORM::for_table('profiles');
 
-        return $profiles;
+        // Filter ignored profiles unless set to be included
+        if ( ! $ignored ) $p->where( 'ignored', false );
+
+        // Return array
+        return $p->find_array();
+
     }
 
     /**
@@ -362,7 +368,7 @@ class Data {
         }
 
         // Get metrics for all valid profiles
-        $data = ORM::for_table('metrics')
+        $data = ORM::for_table('analytics_total')
             ->where( 'date', $day )
             ->where_in('profile_id', $profile_ids)
             ->find_array();
@@ -373,10 +379,9 @@ class Data {
     /**
      * Creates a monthly or daily entry on the database
      * @param  array $metrics API response metrics
-     * @param  string $table  Table name to store metrics daily/monthly
      * @return array Stored data
      */
-    private static function store_metric( $metric ) {
+    private function store_metric( $metric ) {
 
         // Sort data
         $date    = $metric['query']['start-date'];
@@ -384,11 +389,10 @@ class Data {
         $data    = $metric['totalsForAllResults'];
 
         // Create entry
-        $row = ORM::for_table('metrics')->create();
+        $row = ORM::for_table('analytics_total')->create();
 
-        // Set profile data
+        // Set profile id
         $row->profile_id = $profile['profileId'];
-        $row->account_id = $profile['accountId'];
 
         // Set rows data
         $row->visits                   = $data['ga:visits'];
@@ -406,8 +410,77 @@ class Data {
         // Store metrics
         $row->save();
 
+        // Store mobile and tablet data under same id as total data
+        $this->store_mobile_metrics( $metric, $row->id() );
+
         // Return stored data
         return $row->find_one()->as_array();
+    }
+
+    /**
+     * Creates both mobile and tablet entries for metrics from api
+     * @param  array $metrics API response metrics
+     * @param  int $id Associated `analytics_total` id
+     */
+    private function store_mobile_metrics($metric, $id) {
+
+        // To get api data per device a fair bit of sorting has to happen
+        // The total is broken down into a 'rows' field and is in order 'desktop', 'mobile', 'tablet'
+        // The order of the metrics data for each platform is then in order which it was called,
+        // so using the indexes from the $metrics ivar, makes this logical.
+        // Tha said, the first index is the platform name, so this needs unsetting to line up the indexes.
+
+        // Google sometimes doesn't return device data, or only returns partial data
+        // In this case simply return and don't store any
+        // Firstly make sure rows is set then make sure a 3rd index exists, meaning all 3 platform is being included
+        if ( ! isset($metric['rows']) || ! isset($metric['rows'][2] ) ) return;
+
+        // Firstly remove desktop data (index 0) from row as it's stored under totals
+        array_shift($metric['rows']);
+
+        // Now repeat inserts for both mobile and tablet which is now index 0, 1
+        foreach (array('mobile', 'tablet') as $index => $platform) {
+
+            // Sort data
+            $date    = $metric['query']['start-date'];
+            $profile = $metric['profileInfo'];
+
+            // Get tablet or mobile data
+            $data = $metric['rows'][$index];
+
+            // Remove first key which simply identifies platform
+            // Removing this brings array keys in line with the order the metrics where called
+            // making identifying them easier
+            array_shift($data);
+
+            // Create db entries
+            $row = ORM::for_table("analytics_{$platform}")->create();
+
+            // Link id to totals row
+            $row->id = $id;
+
+            // Set profile id
+            $row->profile_id = $profile['profileId'];
+
+            // Get metrics call order by flipping metrics array
+            // This means the ga:metric is the key and the value is the index which is was called
+            $mco = array_flip($this->metrics);
+
+            // Set rows data based on same order they where called in the metrics array
+            $row->visits                   = $data[$mco['ga:visits']];
+            $row->visitors                 = $data[$mco['ga:visitors']];
+            $row->unique_visits            = $data[$mco['ga:newVisits']];
+            $row->bounces                  = $data[$mco['ga:bounces']];
+            $row->avg_views_per_visit      = $data[$mco['ga:pageviewsPerVisit']];
+            $row->avg_time_on_site         = $data[$mco['ga:avgTimeOnSite']];
+
+            // Add metrics day
+            $row->date = $date;
+
+            // Store metrics
+            $row->save();
+
+        }
     }
 
     /**

@@ -37,12 +37,9 @@ $groups = $app->api->get_groups();
 // Get profiles
 $profiles = $app->api->get_profiles();
 
-// Check if a group is selected else use first
-$selected_group = isset($_GET['group']) ? $_GET['group'] : 'all';
-
 ?>
 
-
+<!-- Status message -->
 <div class="status-bar text-center alert <?= $status_state ?>"><?= $status_message ?></div>
 
 <div class="row">
@@ -120,7 +117,7 @@ $selected_group = isset($_GET['group']) ? $_GET['group'] : 'all';
                 </div>
 
                 <div class="form-group col-md-2">
-                    <button type="submit" class="pull-right btn btn-success btn-lg">Save</button>
+                    <button type="submit" class="pull-right btn btn-success btn-lg">Update</button>
                 </div>
             </div>
 

@@ -6,39 +6,68 @@ CREATE TABLE `accounts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Create syntax for TABLE 'api_errors'
-CREATE TABLE `api_errors` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `error` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Create syntax for TABLE 'groups'
-CREATE TABLE `groups` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Create syntax for TABLE 'metrics'
-CREATE TABLE `metrics` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `date` date DEFAULT NULL,
+-- Create syntax for TABLE 'analytics_mobile'
+CREATE TABLE `analytics_mobile` (
+  `id` int(11) unsigned NOT NULL,
+  `date` date NOT NULL,
   `profile_id` int(11) NOT NULL,
-  `account_id` int(11) NOT NULL,
   `visits` int(11) DEFAULT NULL,
   `visitors` int(11) DEFAULT NULL,
   `unique_visits` int(11) DEFAULT NULL,
   `bounces` int(11) DEFAULT NULL,
   `avg_views_per_visit` double DEFAULT NULL,
   `avg_time_on_site` double DEFAULT NULL,
-  `percent_new_visits` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `date` (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create syntax for TABLE 'analytics_tablet'
+CREATE TABLE `analytics_tablet` (
+  `id` int(11) unsigned NOT NULL,
+  `date` date NOT NULL,
+  `profile_id` int(11) NOT NULL,
+  `visits` int(11) DEFAULT NULL,
+  `visitors` int(11) DEFAULT NULL,
+  `unique_visits` int(11) DEFAULT NULL,
+  `bounces` int(11) DEFAULT NULL,
+  `avg_views_per_visit` double DEFAULT NULL,
+  `avg_time_on_site` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `date` (`date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Create syntax for TABLE 'analytics_total'
+CREATE TABLE `analytics_total` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `profile_id` int(11) NOT NULL,
+  `visits` int(11) DEFAULT NULL,
+  `visitors` int(11) DEFAULT NULL,
+  `unique_visits` int(11) DEFAULT NULL,
+  `bounces` int(11) DEFAULT NULL,
+  `avg_views_per_visit` double DEFAULT NULL,
+  `avg_time_on_site` double DEFAULT NULL,
   `avg_page_load_time` double DEFAULT NULL,
   `avg_server_response_time` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
+
+-- Create syntax for TABLE 'api_errors'
+CREATE TABLE `api_errors` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `error` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=520 DEFAULT CHARSET=utf8;
+
+-- Create syntax for TABLE 'groups'
+CREATE TABLE `groups` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `Name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'options'
 CREATE TABLE `options` (
@@ -47,7 +76,7 @@ CREATE TABLE `options` (
   `value` text NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'profiles'
 CREATE TABLE `profiles` (
