@@ -85,8 +85,7 @@ class Data {
             $this->update_accounts();
 
             // Update and get current user's profiles
-            $this->update_profiles();
-   
+            $this->update_profiles();   
         }
     }
 
@@ -106,7 +105,7 @@ class Data {
             // Send mail to owner if authentication failed
             mail(
 
-                $this->config->owner,
+                $this->config->admin,
                 $this->config->product_name . ' auth failure',
                 'Google APIs could not authenticate for offline mode. Please visit site now to update analytics stats.'
             );

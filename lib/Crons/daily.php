@@ -16,7 +16,7 @@ $config = new \FA\Config();
 date_default_timezone_set($config->timezone);
 
 // As authentication passed create new service using the authenticated client
-$service = new \GA\Data( $ga_auth->client );
+$service = new \GA\Data();
 
 // -------------------------------------------------------
 // Update data for past month and same data one year ago

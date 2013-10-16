@@ -37,9 +37,9 @@
             <!-- Menu items -->
             <? require 'menu.php'; ?>
 
-            <!-- Logout button -->
+            <!-- Auth button -->
             <? if ( ! $app->auth->success ) : ?>
-              <a href=<?= $app->auth->get_auth_url(); ?> class="auth_button btn btn-success pull-right">Sign In</a>
+              <a href="<?= $app->auth->get_auth_url(); ?>" class="auth_button btn btn-success pull-right">Authorise</em></a>
             <? endif; ?>
 
           </div><!--/.nav-collapse -->
@@ -49,8 +49,15 @@
       <!-- Begin page content -->
       <div class="container">
 
-<!-- Get temlpate -->
-<? require $route['template']; ?>
+        <!-- Check whether to display auth alert -->
+        <? if ( ! $app->auth->success ) : ?>
+          <div class="status-bar text-center alert-warning">
+            Application needs to be authorised as <em><?= $app->config->api_user ?></em>
+          </div>
+        <? endif; ?>
+
+        <!-- Get temlpate -->
+        <? require $route['template']; ?>
 
 <!-- Footer -->
       </div>

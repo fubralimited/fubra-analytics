@@ -58,7 +58,7 @@ $profiles = $app->api->get_profiles(true);
                 <!-- Get total visits for profile -->
                 <? $total_visits = $app->api->get_total_visits($profile['id']) ?>
 
-              <tr class="profile <?= $total_visits ? 'visited' : NULL ?><?= $profile['ignored'] ? 'ignored' : NULL ?>">
+              <tr class="profile <?= $total_visits ? 'visited' : NULL ?>">
                 <td><?= $profile['name'] ?></td>
 
                 <!-- Check if profile has a group set -->
