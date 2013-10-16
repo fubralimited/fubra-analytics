@@ -5,6 +5,7 @@
 
     "require": {
         "slim/slim": "2.*",
-        "j4mie/idiorm": "v1.2.3"
+        "j4mie/idiorm": "v1.2.3",
+        "phpmailer/phpmailer": "dev-master"
     }
 }
