@@ -3,6 +3,7 @@
 namespace GA;
 
 use \ORM;
+use \__;
 use \Google_AnalyticsService;
 use \FA\Options;
 use \FA\Config;
@@ -195,6 +196,9 @@ class Data {
      */
     protected function get_data( $date_start, $date_end = NULL ) {
 
+        // Get all profile ids (not ignored)
+        $all_profiles = __::pluck( self::get_profiles(), 'id' );
+
         // Set days array ( if no end date simply add start to days array)
         $days = $date_end ? self::get_days( $date_start, $date_end ) : array($date_start);
 
@@ -204,14 +208,20 @@ class Data {
         // Loop days and get data form either databse or api
         foreach ($days as $day) {
 
-            // Get data fro day from db
+            // Get data from day from db
             $data = self::get_metric( $day );
 
-            // If no data was returned, do an api call to get the data
-            if ( ! $data ) {
+            // Get all profile ids with data
+            $updated_profiles = __::pluck( $data, 'profile_id' );
+
+            // Now check if data is missing any profiles
+            $empty_profiles = __::difference( $all_profiles, $updated_profiles );
+
+            // If any empty profiles exist, do an api call to get the data for those profiles
+            if ( count($empty_profiles) ) {
                 
                 // Api returns the number of api errors if any
-                $api_errors = $this->get_api_data($day);
+                $api_errors = $this->get_api_data($day, $empty_profiles);
 
                 // Add errors if any
                 if ( count($api_errors) ) $res['errors'][] = $api_errors;
@@ -237,7 +247,7 @@ class Data {
      * @return int Return false if all api calls was succesfull or an int for the number of api errors.
      *             API errors can be retreived with get_api_errors()
      */
-    private function get_api_data( $date ) {
+    private function get_api_data( $date, $profiles ) {
 
         // This can take long, so remove timeout
         set_time_limit(0);
@@ -252,10 +262,10 @@ class Data {
         $metric_query = implode(',', $this->metrics);
         
         // Loop all profiles and get day data
-        foreach (self::get_profiles() as $profile) {
+        foreach ( $profiles as $id) {
 
             // Form id
-            $id = "ga:{$profile['id']}";
+            $id = "ga:{$id}";
 
             // Api resonse data
             $metric = NULL;
@@ -285,8 +295,6 @@ class Data {
             // Store metrics in database if avaialble
             if ($metric) $this->store_metric( $metric );
         }
-
-        sleep(1);
 
         // Return only errors if any
         return $api_errors;
