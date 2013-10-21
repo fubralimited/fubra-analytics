@@ -25,52 +25,9 @@ body {
 /* ------------------------------------- 
 		ELEMENTS 
 ------------------------------------- */
-a { color: #2BA6CB;}
-
-.btn {
-	text-decoration:none;
-	color: #FFF;
-	background-color: #666;
-	padding:10px 16px;
-	font-weight:bold;
-	margin-right:10px;
-	text-align:center;
-	cursor:pointer;
-	display: inline-block;
-}
-
-p.callout {
-	padding:15px;
-	background-color:#ECF8FF;
-	margin-bottom: 15px;
-}
-.callout a {
-	font-weight:bold;
-	color: #2BA6CB;
-}
-
-table.social {
-/* 	padding:15px; */
-	background-color: #ebebeb;
-	
-}
-.social .soc-btn {
-	padding: 3px 7px;
-	font-size:12px;
-	margin-bottom:10px;
-	text-decoration:none;
-	color: #FFF;font-weight:bold;
-	display:block;
-	text-align:center;
-}
-a.fb { background-color: #3B5998!important; }
-a.tw { background-color: #1daced!important; }
-a.gp { background-color: #DB4A39!important; }
-a.ms { background-color: #000!important; }
-
-.sidebar .soc-btn { 
-	display:block;
-	width:100%;
+a {
+	color: #333;
+	text-decoration: none;
 }
 
 /* ------------------------------------- 
@@ -78,8 +35,7 @@ a.ms { background-color: #000!important; }
 ------------------------------------- */
 table.head-wrap { width: 100%;}
 
-.header.container table td.logo { padding: 15px; }
-.header.container table td.label { padding: 15px; padding-left:0px;}
+
 
 
 /* ------------------------------------- 
@@ -107,7 +63,7 @@ table.footer-wrap { width: 100%;	clear:both!important;
 h1,h2,h3,h4,h5,h6 {
 font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; line-height: 1.1; margin-bottom:15px; color:#000;
 }
-h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { font-size: 60%; color: #6f6f6f; line-height: 0; text-transform: none; }
+h1 small, h2 small, h3 small, h4 small, h5 small, h6 small { font-size: 100%; color: #6f6f6f; line-height: 0; text-transform: none; }
 
 h1 { font-weight:200; font-size: 44px;}
 h2 { font-weight:200; font-size: 37px;}
@@ -132,31 +88,6 @@ ul li {
 	list-style-position: inside;
 }
 
-/* ------------------------------------- 
-		SIDEBAR 
-------------------------------------- */
-ul.sidebar {
-	background:#ebebeb;
-	display:block;
-	list-style-type: none;
-}
-ul.sidebar li { display: block; margin:0;}
-ul.sidebar li a {
-	text-decoration:none;
-	color: #666;
-	padding:10px 16px;
-/* 	font-weight:bold; */
-	margin-right:10px;
-/* 	text-align:center; */
-	cursor:pointer;
-	border-bottom: 1px solid #777777;
-	border-top: 1px solid #FFFFFF;
-	display:block;
-	margin:0;
-}
-ul.sidebar li a.last { border-bottom-width:0px;}
-ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.sidebar li a h5,ul.sidebar li a h6,ul.sidebar li a p { margin-bottom:0!important;}
-
 
 
 /* --------------------------------------------------- 
@@ -167,7 +98,7 @@ ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.s
 /* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something */
 .container {
 	display:block!important;
-	max-width:600px!important;
+	max-width:900px!important;
 	margin:0 auto!important; /* makes it centered */
 	clear:both!important;
 }
@@ -175,7 +106,7 @@ ul.sidebar li a h1,ul.sidebar li a h2,ul.sidebar li a h3,ul.sidebar li a h4,ul.s
 /* This should also be a block element, so that it will fill 100% of the .container */
 .content {
 	padding:15px;
-	max-width:600px;
+	max-width:900px;
 	margin:0 auto;
 	display:block; 
 }

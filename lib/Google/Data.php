@@ -179,7 +179,8 @@ class Data {
             $entry->account_id = $profile['accountId'];
             $entry->web_property_id = $profile['webPropertyId'];
             $entry->name = $profile['name'];
-            $entry->website_url = $profile['websiteUrl'];
+            // Add some formatting to url. Check http isset else prepend it
+            $entry->website_url = ( strpos($profile['websiteUrl'], 'http') === 0 ) ? $profile['websiteUrl'] : 'http://' . $profile['websiteUrl'];
             $entry->type = $profile['type'];
 
             // Save
@@ -351,8 +352,18 @@ class Data {
         // Filter ignored profiles unless set to be included
         if ( ! $ignored ) $p->where( 'ignored', false );
 
-        // Return array
-        return $p->find_array();
+        // Get profiles array
+        $profiles_raw = $p->find_array();
+
+        // Sort to have profile keys as profile id
+        $profiles = array();
+        foreach ($profiles_raw as $profile) {
+            
+            $profiles[$profile['id']] = $profile;
+        }
+        
+        // Return sorted array
+        return $profiles;
 
     }
 
@@ -380,6 +391,7 @@ class Data {
             ->where_in('profile_id', $profile_ids)
             ->find_array();
 
+        // Return metric
         return $data;
     }
 

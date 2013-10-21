@@ -1,0 +1,70 @@
+
+html {
+    font-size: 16px;
+}
+
+table.data-table {
+
+    border: 1px solid #777;
+    padding: 5px;
+}
+
+tr.legend th{
+
+    background-color: #B0D2FD;
+    font-size: 0.9em;
+    padding: 5px;
+}
+
+tr.legend th small {
+
+    font-weight: 100;
+    color: #000;
+    font-style: italic;
+}
+
+tr.group th {
+
+    text-align: left;
+    padding: 5px;
+    background-color: #E5F9BC;
+    color: #333;
+}
+
+.align-right {
+    float: right;
+}
+
+tr.data {
+
+    text-align: right;
+}
+
+tr.data .profile {
+
+    text-align: left;
+}
+
+tr.data td {
+
+    background-color: #EEE;
+    padding: 1px 5px;
+}
+
+tr.data td.max {
+    background-color: #F08477;
+}
+
+tr.data td.warn {
+    background-color: #EEE6A2;
+}
+
+tr.data td.good {
+    background-color: #BBECAE;
+}
+
+tr.data td.success {
+    background-color: #71EA6A;
+}
+
+

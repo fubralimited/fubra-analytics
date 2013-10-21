@@ -3,6 +3,7 @@
 namespace GA;
 
 use \ORM;
+use \__;
 
 /**
 * Main api data handler class
@@ -11,11 +12,12 @@ class API extends Data {
 
     /**
      * Get sorted array of analytics between (and including) two dates.
+     * Sorted into date -> profile
      * @param  string $from First date (Y-m-d)
      * @param  string $to   Second optional date (Y-m-d)
      * @return array        Analytics data
      */
-    public function get( $from, $to = NULL ) {
+    public function get_as_dates( $from, $to = NULL ) {
 
         // Get raw data from data class
         $data_raw = $this->get_data($from, $to);
@@ -26,21 +28,77 @@ class API extends Data {
         // Add errors
         $data['errors'] = $data_raw['errors'];
 
+        // Get profiles
+        $profile_list = self::get_profiles();
+
         // Loop data and sort into ' day => profile => data '
         foreach ($data_raw['data'] as $day => $profiles) {
 
             foreach ($profiles as $metrics) {
 
+                // Get profile id
+                $profile_id = $metrics['profile_id'];
+
                 // Get profile name
-                $name = self::get_profile_name($metrics['profile_id']);
+                $name = $profile_list[$profile_id]['name'];  
 
                 // Store data to profile name
                 $data['data'][$day][$name] = $metrics;
+
+                // Also set profile url
+                $data['data'][$day][$name]['url'] = $profile_list[$profile_id]['website_url'];
             }
         }
 
         // Return sorted data
         return $data;
+    }
+
+    /**
+     * Sorted into group -> date -> profile
+     * @return [type] [description]
+     */
+    public function get_as_groups( $from, $to = NULL ) {
+
+        // Get raw data from data class
+        $data_raw = $this->get_data($from, $to);
+
+        // Sort data into new array
+        $data = array();
+
+        // Add errors
+        $data['errors'] = $data_raw['errors'];
+
+        // Get profiles
+        $profile_list = self::get_profiles();
+
+        // Loop data and sort into ' day => profile => data '
+        foreach ($data_raw['data'] as $day => $profiles) {
+
+            foreach ($profiles as $metrics) {
+
+                // Get profile id
+                $profile_id = $metrics['profile_id'];
+
+                // Get profile name
+                $name = $profile_list[$profile_id]['name'];               
+
+                // Get group name
+                $group = self::get_group_name( $profile_list[$profile_id]['group'] );
+
+                // Check profile has a group
+                if( ! $group ) $group = 'No Group';
+
+                // Store data to profile name
+                $data['data'][$group][$day][$name] = $metrics;
+
+                // Also set profile url
+                $data['data'][$group][$day][$name]['url'] = $profile_list[$profile_id]['website_url'];
+            }
+        }
+
+        // Return sorted data
+        return $data;        
     }
 
 
@@ -57,7 +115,7 @@ class API extends Data {
             ->find_one();
 
         // Return name value
-        return $name->name;
+        return $name ? $name->name : NULL;
     }
 
     /**
@@ -73,7 +131,7 @@ class API extends Data {
             ->find_one();
 
         // Return name value
-        return $name->name;
+        return $name ? $name->name : NULL;
     }
 
     /**

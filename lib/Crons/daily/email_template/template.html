@@ -1,0 +1,131 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- If you delete this meta tag, Half Life 3 will never be released. -->
+<meta name="viewport" content="width=device-width" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title><%= $config->product_name %></title>
+
+</head>
+ 
+<body bgcolor="#FFFFFF">
+
+<!-- HEADER -->
+<!-- <table class="head-wrap">
+	<tr>
+		<td></td>
+		<td class="header container" >
+				
+				<div class="content">
+				<table>
+					<tr>
+						<td>
+							<h3 class="collapse">
+								<%= $config->product_name %><span class="align-right"><%= $date %></span>
+							</h3>
+						</td>
+					</tr>
+				</table>
+				</div>
+				
+		</td>
+	</tr>
+</table> --><!-- /HEADER -->
+
+<!-- BODY -->
+<table class="body-wrap">
+	<tr>
+		<td></td>
+		<td class="container" bgcolor="#FFFFFF">
+
+			<div class="content">
+			<table class="data-table">
+
+				<!-- Table data labels -->
+				<tr class="legend">
+					<th>Site</th>
+					<th>Server Resp<br/><small>seconds</small></th>
+					<th>Page Load<br/><small>seconds</small></th>
+					<th>Visitors</th>
+					<th>% Change<br/><small>- 7 Days</small></th>
+					<th>Page Views<br/>per Visit</th>
+				</tr>
+				<tr></tr>
+
+				<!-- Start data here -->
+				<% __::each( $data, function( $profiles, $group ){ %>
+
+					<tr class="group"><th colspan="6"><em><%= $group %></em></th></tr>
+
+					<% __::each( $profiles, function( $metrics ){ %>
+
+						<tr class="data">
+
+							<!-- Profile Name -->
+							<td class="profile">
+								<a href="<%= $metrics['url'] %>" target="_blank"><%= $metrics['profile'] %></a>
+							</td>
+
+							<!-- Server Response Time -->
+							<td class="<%= $metrics['class']['avg_server_response_time'] %>">
+								<%= $metrics['avg_server_response_time'] %>
+							</td>
+
+							<!-- Page Load Time -->
+							<td class="<%= $metrics['class']['avg_page_load_time'] %>">
+								<%= $metrics['avg_page_load_time'] %>
+							</td>
+
+							<!-- Visitors -->
+							<td><%= $metrics['visitors'] %></td>
+
+							<!-- Percent Change -->
+							<td class="<%= $metrics['class']['percent_change'] %>">
+								<%= $metrics['percent_change'] %>
+							</td>
+							
+							<!-- Views Per Visit -->
+							<td><%= $metrics['avg_views_per_visit'] %></td>
+
+						</tr>						
+
+					<% }); %>
+
+				<% }); %>
+
+			</table>
+			</div><!-- /content -->
+									
+		</td>
+		<td></td>
+	</tr>
+</table><!-- /BODY -->
+
+<!-- FOOTER -->
+<table class="footer-wrap">
+	<tr>
+		<td></td>
+		<td class="container">
+			
+				<!-- content -->
+				<div class="content">
+				<table>
+				<tr>
+					<td align="center">
+						<p>
+							<a href="<%= $config->product_url %>"><%= $config->product_name %></a>
+						</p>
+					</td>
+				</tr>
+			</table>
+				</div><!-- /content -->
+				
+		</td>
+		<td></td>
+	</tr>
+</table><!-- /FOOTER -->
+
+</body>
+</html>
