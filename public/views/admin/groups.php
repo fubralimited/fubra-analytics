@@ -124,7 +124,23 @@ $profiles = $app->api->get_profiles();
       </div>
 
         <table id="profiles-table" class="table table-striped">
-            <tr><th>Profile</th><th>Group</th><th>Set group</th></tr>
+            <tr>
+                <th>Profile</th>
+                <th>Group</th>
+                <th>
+                    <div class="form-group">
+                        <select id="group_apply" class="form-control input-sm">
+
+                                <!-- Add all (default option) -->
+                                <option value="all">All</option>
+                                <option value="none">None</option>
+                                <? foreach ($groups as $id => $name) : ?>
+                                    <option value="<?= $id ?>"><?= $name ?></option>
+                                <? endforeach; ?>
+                        </select><span for="group_apply">Set group</span>
+                    </div>
+                </th>
+            </tr>
 
             <!-- Create profile rows -->
             <? foreach ($profiles as $profile) : ?>

@@ -12,3 +12,4 @@
 ### TODO:
 ---
 
+- Add group totals

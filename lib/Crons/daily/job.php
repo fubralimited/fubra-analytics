@@ -96,11 +96,8 @@ foreach ($yesterday['data'] as $group => $date_data) {
         $avg_page_load_time = round(floatval($metrics['avg_page_load_time']), 1 );
         $avg_views_per_visit = round(floatval($metrics['avg_views_per_visit']), 1 );
 
-        // Get classes
-        $classes = 
-
         // Create teplate data
-        $template_data[$group][] = array(
+        $template_data['profiles'][$group][] = array(
 
                 'profile'                  => $profile,
                 'url'                      => $metrics['url'],
@@ -117,6 +114,39 @@ foreach ($yesterday['data'] as $group => $date_data) {
                     )
             );
     }
+}
+
+// Add group totals
+foreach ($template_data['profiles'] as $group => $profiles) {
+
+    // Create totals entry
+    $template_data['totals'][$group] = array(
+    
+        'visitors'                 => 0,
+        'percent_change'           => 0,
+        'avg_views_per_visit'      => 0
+    );
+
+    // Counter
+    $i = 0;
+    
+    foreach ($profiles as $profile) {
+        
+        $template_data['totals'][$group]['visitors']                 += $profile['visitors'];
+        $template_data['totals'][$group]['percent_change']           += $profile['percent_change'];
+        $template_data['totals'][$group]['avg_views_per_visit']      += $profile['avg_views_per_visit'];
+
+        // Increment
+        ++$i;
+    }
+
+    // Devide averages by number of profiles (not visits)
+    $template_data['totals'][$group]['percent_change']      /= $i;
+    $template_data['totals'][$group]['avg_views_per_visit'] /= $i;
+
+    // Round avgs
+    $template_data['totals'][$group]['percent_change']      = round($template_data['totals'][$group]['percent_change'], 1);
+    $template_data['totals'][$group]['avg_views_per_visit'] = round($template_data['totals'][$group]['avg_views_per_visit'], 1);
 }
 
 // -------------------------------------------------------
@@ -146,42 +176,42 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 }
 
 // Process
-$email_html = $htmldoc->getHTML();
+echo $email_html = $htmldoc->getHTML();
 
-// New PHPMailer object
-$mail = new PHPMailer;
+// // New PHPMailer object
+// $mail = new PHPMailer;
 
-// Set mailer to use php mail()
-$mail->isMail();
+// // Set mailer to use php mail()
+// $mail->isMail();
 
-// Add sender
-$mail->From = 'analytics@fubra.com';
-$mail->FromName = 'Fubra Analytics';
+// // Add sender
+// $mail->From = 'analytics@fubra.com';
+// $mail->FromName = 'Fubra Analytics';
 
-  // Add a recipient
-$mail->addAddress($config->report['email']);
+//   // Add a recipient
+// $mail->addAddress($config->report['email']);
 
-// Set email format to HTML
-$mail->isHTML(true);
+// // Set email format to HTML
+// $mail->isHTML(true);
 
-// Set encoding to utf-8
-$mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
+// // Set encoding to utf-8
+// $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
-// Set subject
-$mail->Subject = "Fubra Analytics {$dates['yesterday']}";
+// // Set subject
+// $mail->Subject = "Fubra Analytics {$dates['yesterday']}";
 
-// Set message body
-$mail->Body = $email_html;
+// // Set message body
+// $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
+// // Send and check for failure
+// if( ! $mail->send() ) {
     
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 

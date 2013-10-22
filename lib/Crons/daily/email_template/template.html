@@ -12,28 +12,6 @@
  
 <body bgcolor="#FFFFFF">
 
-<!-- HEADER -->
-<!-- <table class="head-wrap">
-	<tr>
-		<td></td>
-		<td class="header container" >
-				
-				<div class="content">
-				<table>
-					<tr>
-						<td>
-							<h3 class="collapse">
-								<%= $config->product_name %><span class="align-right"><%= $date %></span>
-							</h3>
-						</td>
-					</tr>
-				</table>
-				</div>
-				
-		</td>
-	</tr>
-</table> --><!-- /HEADER -->
-
 <!-- BODY -->
 <table class="body-wrap">
 	<tr>
@@ -55,9 +33,14 @@
 				<tr></tr>
 
 				<!-- Start data here -->
-				<% __::each( $data, function( $profiles, $group ){ %>
+				<% __::each( $data['profiles'], function( $profiles, $group ) use ($data) { %>
 
-					<tr class="group"><th colspan="6"><em><%= $group %></em></th></tr>
+					<tr class="group">
+						<th colspan="3"><%= $group %></th>
+						<th class="total"><%= $data['totals'][$group]['visitors'] %></th>
+						<th class="total"><%= $data['totals'][$group]['percent_change'] %></th>
+						<th class="total"><%= $data['totals'][$group]['avg_views_per_visit'] %></th>
+					</tr>
 
 					<% __::each( $profiles, function( $metrics ){ %>
 
