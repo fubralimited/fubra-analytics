@@ -29,6 +29,7 @@ $dates = array(
     'yesterday_last_week'   => date('Y-m-d', strtotime('yesterday - 7 days'))
     );
 
+
 // Get data
 $yesterday = $api->get_as_groups( $dates['yesterday'] );
 $yesterday_last_week = $api->get_as_groups( $dates['yesterday_last_week'] );
@@ -191,40 +192,49 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 // Process
 echo $email_html = $htmldoc->getHTML();
 
-// // New PHPMailer object
-// $mail = new PHPMailer;
+// New PHPMailer object
+$mail = new PHPMailer;
 
-// // Set mailer to use php mail()
-// $mail->isMail();
+// Set mailer to use php mail()
+$mail->isMail();
 
-// // Add sender
-// $mail->From = 'analytics@fubra.com';
-// $mail->FromName = 'Fubra Analytics';
+// Add sender
+$mail->From = 'analytics@fubra.com';
+$mail->FromName = 'Fubra Analytics';
 
-//   // Add a recipient
-// $mail->addAddress($config->report['email']);
+  // Add a recipient
+$mail->addAddress($config->report['email']);
 
-// // Set email format to HTML
-// $mail->isHTML(true);
+// Set email format to HTML
+$mail->isHTML(true);
 
-// // Set encoding to utf-8
-// $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
+// Set encoding to utf-8
+$mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
-// // Set subject
-// $mail->Subject = "Fubra Analytics {$dates['yesterday']}";
+// Form subject
+$subject  = 'Fubra Analytics (';
+// Check if + or -
+$subject .= ($template_data['totals']['percent_change'] > 0) ? '+' : '-';
+// Add percentage change
+$subject .= $template_data['totals']['percent_change'];
+// Add percent sign
+$subject .= '%) ';
+// Add date
+$subject .= date('D, M jS', strtotime('yesterday'));
+$mail->Subject = $subject;
 
-// // Set message body
-// $mail->Body = $email_html;
+// Set message body
+$mail->Body = $email_html;
 
-// // Send and check for failure
-// if( ! $mail->send() ) {
+// Send and check for failure
+if( ! $mail->send() ) {
     
-//     // Send mail to owner if daily mail failed
-//     mail(
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 
