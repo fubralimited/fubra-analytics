@@ -56,7 +56,7 @@ $profiles = $app->api->get_profiles(true);
             <? foreach ($profiles as $profile) : ?>
 
                 <!-- Get total visits for profile -->
-                <? $total_visits = $app->api->get_total_visits($profile['id']) ?>
+                <? $total_visits = $app->api->get_total_profile_visits($profile['id']) ?>
 
               <tr class="profile <?= $total_visits ? 'visited' : NULL ?>">
                 <td><?= $profile['name'] ?></td>

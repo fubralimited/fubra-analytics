@@ -131,13 +131,13 @@ $profiles = $app->api->get_profiles();
                     <div class="form-group">
                         <select id="group_apply" class="form-control input-sm">
 
-                                <!-- Add all (default option) -->
-                                <option value="all">All</option>
+                                <!-- Add instruction (no value) -->
+                                <option value="">Update all to:</option>
                                 <option value="none">None</option>
                                 <? foreach ($groups as $id => $name) : ?>
                                     <option value="<?= $id ?>"><?= $name ?></option>
                                 <? endforeach; ?>
-                        </select><span for="group_apply">Set group</span>
+                        </select>
                     </div>
                 </th>
             </tr>

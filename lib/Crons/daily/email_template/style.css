@@ -3,10 +3,21 @@ html {
     font-size: 16px;
 }
 
+
+
 table.data-table {
 
     border: 1px solid #777;
     padding: 5px;
+}
+
+table.data-table.main tr td{
+
+    padding: 5px;
+    text-align: center;
+    background-color: #EEE;
+    font-size: 1.1em;
+    
 }
 
 tr.legend th{
@@ -16,16 +27,21 @@ tr.legend th{
     padding: 5px;
 }
 
-tr.legend th small {
+small {
 
-    font-weight: 100;
-    color: #000;
+
+    color: #999;
 }
 
 tr.group th {
 
     text-align: left;
     padding: 5px;
+}
+
+tr.totals th {
+    padding: 5px;
+    text-align: right;
     background-color: #444;
     color: #FFF;
 }
@@ -54,20 +70,20 @@ tr.data td {
     padding: 1px 5px;
 }
 
-tr.data td.max {
-    background-color: #F08477;
+table.data-table.main tr td.max, tr.data td.max {
+    background-color: #EE5642;
 }
 
-tr.data td.warn {
-    background-color: #EEE6A2;
+table.data-table.main tr td.warn, tr.data td.warn {
+    background-color: #F5B1A4;
 }
 
-tr.data td.good {
+table.data-table.main tr td.good, tr.data td.good {
     background-color: #BBECAE;
 }
 
-tr.data td.success {
-    background-color: #71EA6A;
+table.data-table.main tr td.success, tr.data td.success {
+    background-color: #72EA51;
 }
 
 

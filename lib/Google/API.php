@@ -87,7 +87,7 @@ class API extends Data {
                 $group = self::get_group_name( $profile_list[$profile_id]['group'] );
 
                 // Check profile has a group
-                if( ! $group ) $group = 'No Group';
+                if( ! $group ) $group = 'Misc';
 
                 // Store data to profile name
                 $data['data'][$group][$day][$name] = $metrics;
@@ -101,6 +101,63 @@ class API extends Data {
         return $data;        
     }
 
+    /**
+     * Return the total page views for a given date
+     * @param  string $date Date for which to return data
+     * @return int          Total page views
+     */
+    public function get_total_page_views($date) {
+        
+        // Get total visits
+        $visits = $this->get_total_visits($date);
+
+        // If no visits simply return 0
+        if ( ! $visits ) return 0;
+
+        // Get avg page views
+        $totals = ORM::for_table('analytics_total')
+            ->raw_query('select AVG(`avg_views_per_visit`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
+            ->find_one()->as_array();
+
+        // Multiply avg visit by total visitors to get total page views
+        $total = $visits * $totals['AVG(`avg_views_per_visit`)'];
+
+        // Return rounded int total
+        return (int)$total;
+    }
+
+    /**
+     * Return the total visitors for a given date
+     * @param  string $date Date for which to return data
+     * @return int          Total visitors
+     */
+    public function get_total_visitors($date) {
+        
+        $totals = ORM::for_table('analytics_total')
+            ->raw_query('select SUM(`visitors`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
+            ->find_one()->as_array();
+
+            // Multiply avg visit by total visitors to get total page views
+            return (int)$totals['SUM(`visitors`)'];
+    }   
+
+    /**
+     * Return the total visits for a given date
+     * @param  string $date Date for which to return data
+     * @return int          Total visits
+     */
+    public function get_total_visits($date) {
+        
+        $visits = ORM::for_table('analytics_total')
+            ->raw_query('select SUM(`visits`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
+            ->find_one()->as_array();
+
+        // Check if any visits was found
+        $visits_total = $visits['SUM(`visits`)'] ? $visits['SUM(`visits`)'] : 0;
+
+        // Return int total
+        return (int)$visits_total;
+    }
 
     /**
      * Return a profile name provided with the profile id
@@ -140,7 +197,7 @@ class API extends Data {
      * @param  int $profile Profile id
      * @return int          Total visits.
      */
-    public function get_total_visits($profile)
+    public function get_total_profile_visits($profile)
     {
         
         $visits = ORM::for_table('analytics_total')

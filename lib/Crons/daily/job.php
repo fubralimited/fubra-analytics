@@ -38,10 +38,13 @@ $template_data = array();
 
 
 // Set some limits to determine classes
+
 $warn_server_resp = 1;
 $max_server_resp = 2;
+
 $warn_page_load = 6;
 $max_page_load = 10;
+
 $warn_change = -25;
 $max_change = -50;
 $good_change = 25;
@@ -71,25 +74,13 @@ foreach ($yesterday['data'] as $group => $date_data) {
 
         // Get visitors for last week
         $prev_visitors = __::first($yesterday_last_week['data'][$group]);
-        $prev_visitors = floatval($prev_visitors[$profile]['visits']);
+        $prev_visitors = floatval($prev_visitors[$profile]['visitors']);
 
         // Get current visitors and visitors chnage from prev week
         $visitors = round(floatval($metrics['visitors']), 2 );
 
-        // Get difference between 2 dtes
-        $visitors_diff =  $prev_visitors - $visitors;
-
-        // Check both dates had visitors
-        // If either is 0 then percentage change is infinite
-        $percent_change = '&#8734;';
-        if( $visitors && $prev_visitors ) {
-
-            // Calculate percentage difference
-            $percent_change =  $visitors_diff / $prev_visitors;
-            $percent_change *= 100;
-            $percent_change = round($percent_change);
-            $percent_change .= '%';
-        }
+        // Get difference
+        $percent_change = \FA\Util::percent_change($prev_visitors, $visitors);
 
         // Format floats
         $avg_server_response_time = round(floatval($metrics['avg_server_response_time']), 1 );
@@ -120,11 +111,10 @@ foreach ($yesterday['data'] as $group => $date_data) {
 foreach ($template_data['profiles'] as $group => $profiles) {
 
     // Create totals entry
-    $template_data['totals'][$group] = array(
+    $template_data['group_totals'][$group] = array(
     
         'visitors'                 => 0,
-        'percent_change'           => 0,
-        'avg_views_per_visit'      => 0
+        'percent_change'           => 0
     );
 
     // Counter
@@ -132,22 +122,45 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     
     foreach ($profiles as $profile) {
         
-        $template_data['totals'][$group]['visitors']                 += $profile['visitors'];
-        $template_data['totals'][$group]['percent_change']           += $profile['percent_change'];
-        $template_data['totals'][$group]['avg_views_per_visit']      += $profile['avg_views_per_visit'];
+        $template_data['group_totals'][$group]['visitors']                 += $profile['visitors'];
+        
+        // Check a change is available. (Not infinty)
+        if ( $profile['percent_change'] != '&#8734;' ) {
+            
+            $template_data['group_totals'][$group]['percent_change']           += $profile['percent_change'];
 
         // Increment
         ++$i;
+
+        }
     }
 
     // Devide averages by number of profiles (not visits)
-    $template_data['totals'][$group]['percent_change']      /= $i;
-    $template_data['totals'][$group]['avg_views_per_visit'] /= $i;
+    if($i) $template_data['group_totals'][$group]['percent_change'] /= $i;
 
     // Round avgs
-    $template_data['totals'][$group]['percent_change']      = round($template_data['totals'][$group]['percent_change'], 1);
-    $template_data['totals'][$group]['avg_views_per_visit'] = round($template_data['totals'][$group]['avg_views_per_visit'], 1);
+    $template_data['group_totals'][$group]['percent_change'] = (int)$template_data['group_totals'][$group]['percent_change'];
+
+    // Add classes
+    $template_data['group_totals'][$group]['class']['percent_change'] = get_chg_class( $template_data['group_totals'][$group]['percent_change'], $max_change, $warn_change, $good_change, $success_change );
 }
+
+// Create abs totals entry
+
+// Get total visits for the two dates
+$visits_yesterday = $api->get_total_visits($dates['yesterday']);
+$visits_last_week = $api->get_total_visits($dates['yesterday_last_week']);
+
+$template_data['totals'] = array(
+
+    'visitors'                 => $api->get_total_visitors($dates['yesterday']),
+    'percent_change'           => \FA\Util::percent_change( $visits_last_week, $visits_yesterday ),
+    'page_views'               => $api->get_total_page_views($dates['yesterday'])
+);
+
+// Add totals percent change class
+$template_data['totals']['class']['percent_change'] = get_chg_class( $template_data['totals']['percent_change'], $max_change, $warn_change, $good_change, $success_change );
+
 
 // -------------------------------------------------------
 

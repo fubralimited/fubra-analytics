@@ -19,6 +19,56 @@
 		<td class="container" bgcolor="#FFFFFF">
 
 			<div class="content">
+
+			<h4>All Sites</h4>
+			<table class="data-table main">
+
+				<!-- Table data labels -->
+				<tr class="legend">
+					<th>Page Views</th>
+					<th>Visitors</th>
+					<th>Change<br/><small>- 7 Days</small></th>
+				</tr>
+				<tr></tr>
+
+				<tr class="data">
+					<td width="33%"><%= $data['totals']['page_views'] %></td>
+					<td width="33%"><%= $data['totals']['visitors'] %></td>
+					<td width="33%" class="<%= $data['totals']['class']['percent_change'] %>"><%= $data['totals']['percent_change'] %>&#37;</td>
+				</tr>
+
+
+			</table>
+
+			<br/>
+
+			<h4>Groups</h4>
+			<table class="data-table groups">
+
+				<!-- Table data labels -->
+				<tr class="legend">
+					<th>Group</th>
+					<th>Visitors</th>
+					<th>Change<br/><small>- 7 Days</small></th>
+				</tr>
+				<tr></tr>
+
+				<% __::each( $data['group_totals'], function( $totals, $group ) { %>
+
+					<tr class="data">
+						<td class="profile"><%= $group %></td>
+						<td><%= $totals['visitors'] %></td>
+						<td class="<%= $totals['class']['percent_change'] %>"><%= $totals['percent_change'] %>&#37;</td>
+					</tr>
+
+				<% }); %>
+
+
+			</table>
+
+			<br/>
+
+			<h4>Sites</h4>
 			<table class="data-table">
 
 				<!-- Table data labels -->
@@ -26,20 +76,17 @@
 					<th>Site</th>
 					<th>Server Resp<br/><small>seconds</small></th>
 					<th>Page Load<br/><small>seconds</small></th>
-					<th>Visitors</th>
-					<th>% Change<br/><small>- 7 Days</small></th>
 					<th>Page Views<br/>per Visit</th>
+					<th>Visitors</th>
+					<th>Change<br/><small>- 7 Days</small></th>
 				</tr>
 				<tr></tr>
 
 				<!-- Start data here -->
 				<% __::each( $data['profiles'], function( $profiles, $group ) use ($data) { %>
-
+						
 					<tr class="group">
-						<th colspan="3"><%= $group %></th>
-						<th class="total"><%= $data['totals'][$group]['visitors'] %></th>
-						<th class="total"><%= $data['totals'][$group]['percent_change'] %></th>
-						<th class="total"><%= $data['totals'][$group]['avg_views_per_visit'] %></th>
+						<th colspan="6"><%= $group %></th>
 					</tr>
 
 					<% __::each( $profiles, function( $metrics ){ %>
@@ -53,28 +100,43 @@
 
 							<!-- Server Response Time -->
 							<td class="<%= $metrics['class']['avg_server_response_time'] %>">
-								<%= $metrics['avg_server_response_time'] %>
+								<% if($metrics['avg_server_response_time']) : %>
+									<%= $metrics['avg_server_response_time'] %>
+								<% else : %>
+									<small>NA</small>
+								<% endif; %>
 							</td>
 
 							<!-- Page Load Time -->
 							<td class="<%= $metrics['class']['avg_page_load_time'] %>">
-								<%= $metrics['avg_page_load_time'] %>
+								<% if($metrics['avg_page_load_time']) : %>
+									<%= $metrics['avg_page_load_time'] %>
+								<% else : %>
+									<small>NA</small>
+								<% endif; %>
 							</td>
 
+							<!-- Views Per Visit -->
+							<td><%= $metrics['avg_views_per_visit'] %></td>
+
 							<!-- Visitors -->
-							<td><%= $metrics['visitors'] %></td>
+							<td><%= number_format( $metrics['visitors'] ) %></td>
 
 							<!-- Percent Change -->
 							<td class="<%= $metrics['class']['percent_change'] %>">
-								<%= $metrics['percent_change'] %>
+								<%= ($metrics['percent_change'] === 'INF') ? '&#8734;' : $metrics['percent_change'] . '&#37;' %>
 							</td>
-							
-							<!-- Views Per Visit -->
-							<td><%= $metrics['avg_views_per_visit'] %></td>
 
 						</tr>						
 
 					<% }); %>
+
+					<tr class="totals">
+						<th></th><th></th><th></th>
+						<th class="total"><%= number_format( $data['group_totals'][$group]['visitors'] ) %></th>
+						<th></th>
+						<th class="total"><%= $data['group_totals'][$group]['percent_change'] %>%</th>
+					</tr>
 
 				<% }); %>
 

@@ -6,7 +6,8 @@ $(function(){
         profilesTableEl   = $('#profiles-table'),
         profileRowsEl     = $('#profiles-table tr.profile'),
         visitsFilterEl    = $('.profiles .visits-filter button'),
-        selectAllEl       = $('.select-all button');
+        selectAllEl       = $('.select-all button'),
+        updateAllEl       = $('#group_apply');
 
     // Filter on both value change (select) and keyup (typing profile filter)
     $('#group_filter, #profile_filter').on( 'change keyup', function() {
@@ -76,6 +77,16 @@ $(function(){
 
         // Prevent submit
         return false;
+    });
+
+    // Update all visible profiles to selected group
+    updateAllEl.change(function(){
+
+        // Get value
+        var val = $(this).val();
+
+        // Update all filtered (visible) results to the selected group
+        if (val) $('tr.profile:visible select').val(val);
     });
 
 
