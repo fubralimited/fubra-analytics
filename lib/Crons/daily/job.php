@@ -37,35 +37,26 @@ $yesterday_last_week = $api->get_as_groups( $dates['yesterday_last_week'] );
 // Prepare data
 $template_data = array();
 
+// Returns a red or green rgb value based on a value and a base
+function get_rgb($val, $base) {
 
-// Set some limits to determine classes
+    // Get absolute value
+    $abs = abs($val);
 
-$warn_server_resp = 1;
-$max_server_resp = 2;
+    // Set no more than base value
+    if ($abs >= $base) $abs = $base;
 
-$warn_page_load = 6;
-$max_page_load = 10;
+    // Calculate percentage of 255
+    $var_c = round( ($abs/$base) * 255 );
 
-$warn_change = -25;
-$max_change = -50;
-$good_change = 25;
-$success_change = 50;
+    // Get remaing value of 255
+    $remain = round( (255 - $var_c) );
 
-function get_val_class( $val, $max, $warn ) {
+    // Check if val is positive then use green else use red
+    return ($val < 0) ? "rgb(255,{$remain},{$remain})" : "rgb({$remain},255,{$remain})";
 
-    if ($val >= $max) return 'max';
-    elseif ($val >= $warn) return 'warn';
-    else return NULL;
 }
 
-function get_chg_class( $val, $max, $warn, $good = NULL, $success = NULL ) {
-
-    if( $val >= $success) return 'success';
-    elseif ( $val >= $good) return 'good';
-    elseif ( $val <= $max) return 'max';
-    elseif ( $val <= $warn) return 'warn';
-    else return NULL;
-}
 
 // Loop groups
 foreach ($yesterday['data'] as $group => $date_data) {
@@ -97,13 +88,7 @@ foreach ($yesterday['data'] as $group => $date_data) {
                 'avg_page_load_time'       => $avg_page_load_time,
                 'visitors'                 => $visitors,
                 'percent_change'           => $percent_change,
-                'avg_views_per_visit'      => $avg_views_per_visit,
-                'class'                    => array(
-
-                        'avg_server_response_time' => get_val_class( $avg_server_response_time, $max_server_resp, $warn_server_resp ),
-                        'avg_page_load_time'       => get_val_class( $avg_page_load_time, $max_page_load, $warn_page_load ),
-                        'percent_change'           => get_chg_class( $percent_change, $max_change, $warn_change, $good_change, $success_change )
-                    )
+                'avg_views_per_visit'      => $avg_views_per_visit
             );
     }
 }
@@ -141,9 +126,6 @@ foreach ($template_data['profiles'] as $group => $profiles) {
 
     // Round avgs
     $template_data['group_totals'][$group]['percent_change'] = (int)$template_data['group_totals'][$group]['percent_change'];
-
-    // Add classes
-    $template_data['group_totals'][$group]['class']['percent_change'] = get_chg_class( $template_data['group_totals'][$group]['percent_change'], $max_change, $warn_change, $good_change, $success_change );
 }
 
 // Create abs totals entry
@@ -158,9 +140,6 @@ $template_data['totals'] = array(
     'percent_change'           => \FA\Util::percent_change( $visits_last_week, $visits_yesterday ),
     'page_views'               => $api->get_total_page_views($dates['yesterday'])
 );
-
-// Add totals percent change class
-$template_data['totals']['class']['percent_change'] = get_chg_class( $template_data['totals']['percent_change'], $max_change, $warn_change, $good_change, $success_change );
 
 
 // -------------------------------------------------------
@@ -192,49 +171,49 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 // Process
 echo $email_html = $htmldoc->getHTML();
 
-// New PHPMailer object
-$mail = new PHPMailer;
+// // New PHPMailer object
+// $mail = new PHPMailer;
 
-// Set mailer to use php mail()
-$mail->isMail();
+// // Set mailer to use php mail()
+// $mail->isMail();
 
-// Add sender
-$mail->From = 'analytics@fubra.com';
-$mail->FromName = 'Fubra Analytics';
+// // Add sender
+// $mail->From = 'analytics@fubra.com';
+// $mail->FromName = 'Fubra Analytics';
 
-  // Add a recipient
-$mail->addAddress($config->report['email']);
+//   // Add a recipient
+// $mail->addAddress($config->report['email']);
 
-// Set email format to HTML
-$mail->isHTML(true);
+// // Set email format to HTML
+// $mail->isHTML(true);
 
-// Set encoding to utf-8
-$mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
+// // Set encoding to utf-8
+// $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
-// Form subject
-$subject  = 'Fubra Analytics (';
-// Check if + or -
-$subject .= ($template_data['totals']['percent_change'] > 0) ? '+' : '-';
-// Add percentage change
-$subject .= $template_data['totals']['percent_change'];
-// Add percent sign
-$subject .= '%) ';
-// Add date
-$subject .= date('D, M jS', strtotime('yesterday'));
-$mail->Subject = $subject;
+// // Form subject
+// $subject  = 'Fubra Analytics (';
+// // Check if + or -
+// $subject .= ($template_data['totals']['percent_change'] > 0) ? '+' : '-';
+// // Add percentage change
+// $subject .= $template_data['totals']['percent_change'];
+// // Add percent sign
+// $subject .= '%) ';
+// // Add date
+// $subject .= date('D, M jS', strtotime('yesterday'));
+// $mail->Subject = $subject;
 
-// Set message body
-$mail->Body = $email_html;
+// // Set message body
+// $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
+// // Send and check for failure
+// if( ! $mail->send() ) {
     
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 

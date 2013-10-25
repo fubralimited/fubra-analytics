@@ -3,7 +3,9 @@ html {
     font-size: 16px;
 }
 
-
+table td{
+    border: 1px solid #EEE;
+}
 
 table.data-table {
 
@@ -15,9 +17,7 @@ table.data-table.main tr td{
 
     padding: 5px;
     text-align: center;
-    background-color: #EEE;
-    font-size: 1.1em;
-    
+    font-size: 1.1em;    
 }
 
 tr.legend th{
@@ -63,27 +63,4 @@ tr.data .profile {
 
     text-align: left;
 }
-
-tr.data td {
-
-    background-color: #EEE;
-    padding: 1px 5px;
-}
-
-table.data-table.main tr td.max, tr.data td.max {
-    background-color: #EE5642;
-}
-
-table.data-table.main tr td.warn, tr.data td.warn {
-    background-color: #F5B1A4;
-}
-
-table.data-table.main tr td.good, tr.data td.good {
-    background-color: #BBECAE;
-}
-
-table.data-table.main tr td.success, tr.data td.success {
-    background-color: #72EA51;
-}
-
 
