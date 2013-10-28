@@ -32,8 +32,8 @@
 				<tr></tr>
 
 				<tr class="data">
-					<td width="33%"><%= $data['totals']['page_views'] %></td>
-					<td width="33%"><%= $data['totals']['visitors'] %></td>
+					<td width="33%"><%= number_format($data['totals']['page_views']) %></td>
+					<td width="33%"><%= number_format($data['totals']['visitors']) %></td>
 					<td width="33%" style="background-color:<%= get_rgb($data['totals']['percent_change'], 100) %>"><%= $data['totals']['percent_change'] %>&#37;</td>
 				</tr>
 
@@ -52,12 +52,11 @@
 					<th>Change<br/><small>- 7 Days</small></th>
 				</tr>
 				<tr></tr>
-
 				<% __::each( $data['group_totals'], function( $totals, $group ) { %>
 
 					<tr class="data">
 						<td class="profile"><%= $group %></td>
-						<td><%= $totals['visitors'] %></td>
+						<td><%= number_format($totals['visitors']) %></td>
 						<td style="background-color:<%= get_rgb($totals['percent_change'], 100) %>"><%= $totals['percent_change'] %>&#37;</td>
 					</tr>
 

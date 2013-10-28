@@ -17,12 +17,12 @@ $config = new \FA\Config();
 // Set timezone
 date_default_timezone_set($config->timezone);
 
-// As authentication passed create new service using the authenticated client
+// Get api instance
 $api = new \GA\API();
 
 // -------------------------------------------------------
 
-// Get dates
+// Form dates
 $dates = array(
 
     'yesterday'             => date('Y-m-d', strtotime('yesterday')),
@@ -108,12 +108,12 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     
     foreach ($profiles as $profile) {
         
-        $template_data['group_totals'][$group]['visitors']                 += $profile['visitors'];
+        $template_data['group_totals'][$group]['visitors'] += $profile['visitors'];
         
         // Check a change is available. (Not infinty)
         if ( $profile['percent_change'] != '&#8734;' ) {
             
-            $template_data['group_totals'][$group]['percent_change']           += $profile['percent_change'];
+            $template_data['group_totals'][$group]['percent_change'] += $profile['percent_change'];
 
         // Increment
         ++$i;

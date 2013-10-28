@@ -3,13 +3,16 @@ html {
     font-size: 16px;
 }
 
-table td{
+table.data-table td{
+    
     border: 1px solid #EEE;
+    padding: 1px 5px;
 }
 
 table.data-table {
 
-    border: 1px solid #777;
+    border-collapse: collapse;
+    border: 1px solid #EEE;
     padding: 5px;
 }
 
@@ -28,7 +31,6 @@ tr.legend th{
 }
 
 small {
-
 
     color: #999;
 }
@@ -55,7 +57,6 @@ tr.group th.total {
 }
 
 tr.data {
-
     text-align: right;
 }
 
