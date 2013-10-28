@@ -14,6 +14,7 @@ This script will install ${APP}:
     - Check for and create a config file
     - Install Composer dependancies
     - Create database tables
+    - Install daily, weekly and monthly cron jobs
 "
 # Get install directory
 INSTALL_DIR=$(dirname $0)
@@ -33,17 +34,28 @@ read -p "Do you want to continue? (y/n)" -n 1
 
             echo -e "* Config file found \n"
 
+            echo -e "* Updating composer \n"
+
             # Run local composer self update
             ./composer/composer.phar self-update
+
+            echo -e "* Installing composer dependancies \n"
 
             # Run composer install
             ./composer/composer.phar update -d ./composer
 
+            echo -e "* Creating database tables \n"
+
             # Run database setup
             $INSTALL_DIR/database_install.php
 
+            echo -e "* Installing cron jobs \n"
+
+            # Run cron setup
+            $INSTALL_DIR/cron_install.php
+
             # Done
-            echo -e "\n INSTALL COMPLETE!"
+            echo -e "\n\n INSTALL COMPLETE!"
         
         # Else create from sample
         else

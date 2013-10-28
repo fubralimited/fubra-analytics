@@ -8,6 +8,7 @@
         "j4mie/idiorm": "v1.2.3",
         "phpmailer/phpmailer": "dev-master",
         "underscore/underscore.php": "dev-master",
-        "inlinestyle/inlinestyle": "dev-master"
+        "inlinestyle/inlinestyle": "dev-master",
+        "yzalis/crontab": "1.0.*@dev"
     }
 }
