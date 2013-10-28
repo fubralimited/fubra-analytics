@@ -98,7 +98,9 @@
 							</td>
 
 							<!-- Server Response Time -->
-							<td style="background-color:<%= get_rgb(($metrics['avg_server_response_time'] * -1 ), 5) %>">
+							<td <% if($metrics['avg_server_response_time']) : %>
+									style="background-color: <%= get_rgb(($metrics['avg_server_response_time'] * -1 ), 5) %>"
+								<% endif; %> >
 								<% if($metrics['avg_server_response_time']) : %>
 									<%= $metrics['avg_server_response_time'] %>
 								<% else : %>
@@ -107,7 +109,9 @@
 							</td>
 
 							<!-- Page Load Time -->
-							<td style="background-color:<%= get_rgb(($metrics['avg_page_load_time'] * -1 ), 15) %>">
+							<td <% if($metrics['avg_page_load_time']) : %>
+									style="background-color:<%= get_rgb(($metrics['avg_page_load_time'] * -1 ), 15) %>"
+								<% endif; %> >
 								<% if($metrics['avg_page_load_time']) : %>
 									<%= $metrics['avg_page_load_time'] %>
 								<% else : %>

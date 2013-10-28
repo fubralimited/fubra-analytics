@@ -1,19 +1,7 @@
 /* ------------------------------------- 
 		GLOBAL 
 ------------------------------------- */
-* { 
-	margin:0;
-	padding:0;
-}
-* { font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif; }
 
-img { 
-	max-width: 100%; 
-}
-.collapse {
-	margin:0;
-	padding:0;
-}
 body {
 	-webkit-font-smoothing:antialiased; 
 	-webkit-text-size-adjust:none; 
@@ -21,28 +9,15 @@ body {
 	height: 100%;
 }
 
-
-/* ------------------------------------- 
-		ELEMENTS 
-------------------------------------- */
-a {
-	color: #333;
-	text-decoration: none;
-}
-
 /* ------------------------------------- 
 		HEADER 
 ------------------------------------- */
 table.head-wrap { width: 100%;}
 
-
-
-
 /* ------------------------------------- 
 		BODY 
 ------------------------------------- */
 table.body-wrap { width: 100%;}
-
 
 /* ------------------------------------- 
 		FOOTER 
@@ -55,7 +30,6 @@ table.footer-wrap { width: 100%;	clear:both!important;
 	font-weight: bold;
 	
 }
-
 
 /* ------------------------------------- 
 		TYPOGRAPHY 
@@ -120,18 +94,13 @@ ul li {
 	width: 300px;
 	float:left;
 }
-.column tr td { padding: 15px; }
+
 .column-wrap { 
 	padding:0!important; 
 	margin:0 auto; 
 	max-width:600px!important;
 }
 .column table { width:100%;}
-.social .column {
-	width: 280px;
-	min-width: 279px;
-	float:left;
-}
 
 /* Be sure to place a .clear element after each set of columns, just to be safe */
 .clear { display: block; clear: both; }

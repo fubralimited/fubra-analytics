@@ -154,10 +154,11 @@ $html = file_get_contents( __DIR__ . '/email_template/template.html' );
 // Important this is done prior to inlining as template tags will be converted to special characters
 $html = __::template($html, array(
 
-        'config' => $config,
-        'date'   => $dates['yesterday'],
-        'data'   => $template_data
-    ));
+        'config'  => $config,
+        'date'    => $dates['yesterday'],
+        'data'    => $template_data
+));
+
 
 // Create new inline instance
 $htmldoc = new \InlineStyle\InlineStyle($html);
@@ -170,6 +171,8 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 
 // Process
 echo $email_html = $htmldoc->getHTML();
+
+
 
 // // New PHPMailer object
 // $mail = new PHPMailer;
