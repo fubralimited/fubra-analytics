@@ -17,6 +17,7 @@ $cron_time = date_parse($config->report['time']);
 // Set up a jobs array
 $jobs = array();
 
+
 // ---------------------------- Install daily crons ----------------------------
 
 foreach (glob(dirname(__DIR__) . '/lib/Cron/daily/*.php') as $cmd) {
@@ -77,6 +78,9 @@ foreach (glob(dirname(__DIR__) . '/lib/Cron/monthly/*.php') as $cmd) {
     $jobs[] = $job;
 }
 
+// -------------------------------------------------------------------------------
+
+
 // Remove all existing (related) cron jobs
 foreach ( $crontab->getJobs() as $job) {
 
@@ -92,8 +96,8 @@ foreach ( $crontab->getJobs() as $job) {
 // Install all new jobs
 foreach ($jobs as $newJob) $crontab->addJob($newJob);
 
-// Render new crontab file
-echo $crontab->render();
-
 // Install crontab
 $crontab->write();
+
+// Render new crontab file
+echo $crontab->render();
