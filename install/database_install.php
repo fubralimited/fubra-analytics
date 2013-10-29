@@ -4,8 +4,6 @@
 // Get configuration.ini file
 $config = parse_ini_file( dirname(__DIR__) . '/config.ini' );
 
-exit();
-
 // Create db object
 $db = new mysqli(
             $config['hostname'],
