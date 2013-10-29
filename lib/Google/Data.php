@@ -101,18 +101,7 @@ class Data {
         $ga_auth = Auth::get_instance();
 
         // Check if api authenticated succesfully
-        if ( ! $ga_auth->success) {
-            
-            // Send mail to owner if authentication failed
-            mail(
-
-                $this->config->admin,
-                $this->config->product_name . ' auth failure',
-                'Google APIs could not authenticate for offline mode. Please visit site now to update analytics stats.'
-            );
-
-            return false;
-        }
+        if ( ! $ga_auth->success) return false;
 
         // Set authenticated as true
         $this->authenticated = true;
