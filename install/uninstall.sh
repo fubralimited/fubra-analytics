@@ -25,7 +25,9 @@ read -p "Are you sure you wnt to uninstall ${APP} cron jobs? (y/n)" -n 1
     if [[ $REPLY =~ ^[Yy]$ ]]; then
 
         # Run cron uninstall
-        $INSTALL_DIR/cron_install.php
+        $INSTALL_DIR/cron_uninstall.php
 
         # Done
         echo -e "\n\n UNINSTALL COMPLETE!"
+
+    fi

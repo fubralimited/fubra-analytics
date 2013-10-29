@@ -7,6 +7,9 @@ require dirname(__DIR__) . '/composer/vendor/autoload.php';
 // Create crontab instance
 $crontab = new \Crontab\Crontab();
 
+// Render current crontab file
+echo $crontab->render();
+
 // Remove all existing (related) cron jobs
 foreach ( $crontab->getJobs() as $job) {
 
