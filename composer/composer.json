@@ -9,6 +9,7 @@
         "phpmailer/phpmailer": "dev-master",
         "underscore/underscore.php": "dev-master",
         "inlinestyle/inlinestyle": "dev-master",
-        "yzalis/crontab": "1.0.*@dev"
+        "yzalis/crontab": "1.0.*@dev",
+        "zaininnari/html-minifier": "*"
     }
 }

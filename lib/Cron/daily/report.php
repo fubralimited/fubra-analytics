@@ -20,6 +20,10 @@ date_default_timezone_set($config->timezone);
 // Get api instance
 $api = new \GA\API();
 
+
+// print($api->get_total_visits('2013-10-29'));
+// die();
+
 // -------------------------------------------------------
 
 // Form dates
@@ -53,10 +57,15 @@ function get_rgb($val, $base) {
     $remain = round( (255 - $var_c) );
 
     // Check if val is positive then use green else use red
-    return ($val < 0) ? "rgb(255,{$remain},{$remain})" : "rgb({$remain},255,{$remain})";
+    $rgb = ($val < 0) ? array( 255, $remain, $remain ) : array( $remain , 255, $remain );
 
+    $hex = "#";
+    $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
+    $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
+
+    return $hex; // returns the hex value including the shebang
 }
-
 
 // Loop groups
 foreach ($yesterday['data'] as $group => $date_data) {
@@ -170,53 +179,52 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 }
 
 // Process
-echo $email_html = $htmldoc->getHTML();
+$email_html = $htmldoc->getHTML();
 
+// Minify html
+$email_html = \zz\Html\HTMLMinify::minify($email_html);
 
+// New PHPMailer object
+$mail = new PHPMailer;
 
-// // New PHPMailer object
-// $mail = new PHPMailer;
+// Set mailer to use php mail()
+$mail->isMail();
 
-// // Set mailer to use php mail()
-// $mail->isMail();
+// Add sender
+$mail->From = 'analytics@fubra.com';
+$mail->FromName = 'Fubra Analytics';
 
-// // Add sender
-// $mail->From = 'analytics@fubra.com';
-// $mail->FromName = 'Fubra Analytics';
+  // Add a recipient
+$mail->addAddress($config->report['email']);
 
-//   // Add a recipient
-// $mail->addAddress($config->report['email']);
+// Set email format to HTML
+$mail->isHTML(true);
 
-// // Set email format to HTML
-// $mail->isHTML(true);
+// Set encoding to utf-8
+$mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
-// // Set encoding to utf-8
-// $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
+// Form subject
+$subject  = 'Fubra Analytics (';
+// Add percentage change
+$subject .= $template_data['totals']['percent_change'];
+// Add percent sign
+$subject .= '%) ';
+// Add date
+$subject .= date('D, M jS', strtotime('yesterday'));
+$mail->Subject = $subject;
 
-// // Form subject
-// $subject  = 'Fubra Analytics (';
-// // Check if + or -
-// $subject .= ($template_data['totals']['percent_change'] > 0) ? '+' : '-';
-// // Add percentage change
-// $subject .= $template_data['totals']['percent_change'];
-// // Add percent sign
-// $subject .= '%) ';
-// // Add date
-// $subject .= date('D, M jS', strtotime('yesterday'));
-// $mail->Subject = $subject;
+// Set message body
+$mail->Body = $email_html;
 
-// // Set message body
-// $mail->Body = $email_html;
-
-// // Send and check for failure
-// if( ! $mail->send() ) {
+// Send and check for failure
+if( ! $mail->send() ) {
     
-//     // Send mail to owner if daily mail failed
-//     mail(
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 
