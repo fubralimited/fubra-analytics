@@ -11,52 +11,9 @@ use \__;
 class API extends Data {
 
     /**
-     * Get sorted array of analytics between (and including) two dates.
-     * Sorted into date -> profile
-     * @param  string $from First date (Y-m-d)
-     * @param  string $to   Second optional date (Y-m-d)
-     * @return array        Analytics data
-     */
-    public function get_as_dates( $from, $to = NULL ) {
-
-        // Get raw data from data class
-        $data_raw = $this->get_data($from, $to);
-
-        // Sort data into new array
-        $data = array();
-
-        // Add errors
-        $data['errors'] = $data_raw['errors'];
-
-        // Get profiles
-        $profile_list = self::get_profiles();
-
-        // Loop data and sort into ' day => profile => data '
-        foreach ($data_raw['data'] as $day => $profiles) {
-
-            foreach ($profiles as $metrics) {
-
-                // Get profile id
-                $profile_id = $metrics['profile_id'];
-
-                // Get profile name
-                $name = $profile_list[$profile_id]['name'];  
-
-                // Store data to profile name
-                $data['data'][$day][$name] = $metrics;
-
-                // Also set profile url
-                $data['data'][$day][$name]['url'] = $profile_list[$profile_id]['website_url'];
-            }
-        }
-
-        // Return sorted data
-        return $data;
-    }
-
-    /**
+     * Get data for a date or between 2 dates
      * Sorted into group -> date -> profile
-     * @return [type] [description]
+     * @return array Data array
      */
     public function get_as_groups( $from, $to = NULL ) {
 
@@ -115,6 +72,7 @@ class API extends Data {
         if ( ! $visits ) return 0;
 
         // Get avg page views
+        // Performing raw query as idiorm avg() returns a int which makes figures inaccurate
         $totals = ORM::for_table('analytics_total')
             ->raw_query('select AVG(`avg_views_per_visit`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
             ->find_one()->as_array();
@@ -133,12 +91,12 @@ class API extends Data {
      */
     public function get_total_visitors($date) {
         
-        $totals = ORM::for_table('analytics_total')
-            ->raw_query('select SUM(`visitors`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
-            ->find_one()->as_array();
+        $visitors = ORM::for_table('analytics_total')
+            ->where('date', $date )
+            ->sum('visitors');
 
-            // Multiply avg visit by total visitors to get total page views
-            return (int)$totals['SUM(`visitors`)'];
+        // Multiply avg visit by total visitors to get total page views
+        return $visitors;
     }   
 
     /**
@@ -146,17 +104,14 @@ class API extends Data {
      * @param  string $date Date for which to return data
      * @return int          Total visits
      */
-    public function get_total_visits($date) {
+    public function get_total_visits($date, $group = NULL) {
         
         $visits = ORM::for_table('analytics_total')
-            ->raw_query('select SUM(`visits`) from `analytics_total` where `date` = :date', array( 'date' => $date ))
-            ->find_one()->as_array();
-
-        // Check if any visits was found
-        $visits_total = $visits['SUM(`visits`)'] ? $visits['SUM(`visits`)'] : 0;
+            ->where('date', $date )
+            ->sum('visits');
 
         // Return int total
-        return (int)$visits_total;
+        return $visits;
     }
 
     /**
@@ -199,15 +154,11 @@ class API extends Data {
      */
     public function get_total_profile_visits($profile)
     {
-        
         $visits = ORM::for_table('analytics_total')
-            ->raw_query('SELECT SUM(`visits`) FROM `analytics_total` WHERE `profile_id` = :id', array( 'id' => $profile ))
-            ->find_one()->as_array();
+            ->where('profile_id', $profile)
+            ->sum('visits');
 
-        // Check if any visits was found
-        $visits_total = $visits['SUM(`visits`)'] ? $visits['SUM(`visits`)'] : 0;
-
-        return $visits_total;
+        return $visits;
     }
 
     /**

@@ -11,3 +11,5 @@
 - Add uninstall script. Removes cron jobs and db tables (prompt)
 
 - Weekly mobile report
+
+- Group total change needs to be calculated from visitors and not the avg change

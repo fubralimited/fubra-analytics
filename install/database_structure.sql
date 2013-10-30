@@ -1,5 +1,5 @@
 -- Create syntax for TABLE 'accounts'
-CREATE TABLE `accounts` (
+CREATE TABLE IF NOT EXISTS `accounts` (
   `id` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -7,7 +7,7 @@ CREATE TABLE `accounts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'analytics_mobile'
-CREATE TABLE `analytics_mobile` (
+CREATE TABLE IF NOT EXISTS `analytics_mobile` (
   `id` int(11) unsigned NOT NULL,
   `date` date NOT NULL,
   `profile_id` int(11) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `analytics_mobile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'analytics_tablet'
-CREATE TABLE `analytics_tablet` (
+CREATE TABLE IF NOT EXISTS `analytics_tablet` (
   `id` int(11) unsigned NOT NULL,
   `date` date NOT NULL,
   `profile_id` int(11) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE `analytics_tablet` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'analytics_total'
-CREATE TABLE `analytics_total` (
+CREATE TABLE IF NOT EXISTS `analytics_total` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `profile_id` int(11) NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE `analytics_total` (
 ) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'api_errors'
-CREATE TABLE `api_errors` (
+CREATE TABLE IF NOT EXISTS `api_errors` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `error` text,
@@ -62,7 +62,7 @@ CREATE TABLE `api_errors` (
 ) ENGINE=InnoDB AUTO_INCREMENT=520 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'groups'
-CREATE TABLE `groups` (
+CREATE TABLE IF NOT EXISTS `groups` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
@@ -70,7 +70,7 @@ CREATE TABLE `groups` (
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'options'
-CREATE TABLE `options` (
+CREATE TABLE IF NOT EXISTS `options` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `key` varchar(255) NOT NULL DEFAULT '',
   `value` text NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE `options` (
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'profiles'
-CREATE TABLE `profiles` (
+CREATE TABLE IF NOT EXISTS `profiles` (
   `id` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   `account_id` int(11) unsigned NOT NULL,

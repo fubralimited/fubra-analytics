@@ -101,7 +101,7 @@ class Data {
         $ga_auth = Auth::get_instance();
 
         // Check if api authenticated succesfully
-        if ( ! $ga_auth->success) return false;
+        if ( ! $ga_auth->success ) return false;
 
         // Set authenticated as true
         $this->authenticated = true;
