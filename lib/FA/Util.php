@@ -28,7 +28,7 @@ class Util {
         $difference = $val_b - $val_a;
         $change = ($difference / $val_a)*100;
 
-        return (int)$change;
+        return round($change);
         
     }
 
