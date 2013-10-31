@@ -97,10 +97,14 @@
 							</td>
 
 							<!-- Bounce Rate -->
-							<td <% if($metrics['bounce_rate']) : %>
-									style="background-color: <%= get_rgb(($metrics['bounce_rate']*-1), 100) %>"
+							<td <% if( $metrics['bounce_rate'] && ($metrics['visitors'] > 10) ) : %>
+									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate'], 50, true) %>"
 								<% endif; %> >
-								<%= $metrics['bounce_rate'] %>&#37;
+								<% if( $metrics['bounce_rate'] && ($metrics['visitors'] > 10) ) : %>
+                                        <%= $metrics['bounce_rate'] %>&#37;
+                                <% else : %>
+                                        <small>NA</small>
+                                <% endif; %>
 							</td>
 
 							<!-- Views Per Visit -->
@@ -110,7 +114,7 @@
 							<td><%= number_format( $metrics['visitors'] ) %></td>
 
 							<!-- Percent Change -->
-							<td style="background-color:<%= get_rgb($metrics['percent_change'], 100) %>">
+							<td style="background-color:<%= \FA\Util::percentage_color($metrics['percent_change']) %>">
 								<%= ($metrics['percent_change'] === 'INF') ? '&#8734;' : $metrics['percent_change'] . '&#37;' %>
 							</td>
 
