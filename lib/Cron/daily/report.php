@@ -117,14 +117,15 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     // Add group profile visits    
     foreach ($profiles as $profile) {
         
-        // Add (+) visitors for profile 
-        $template_data['group_totals'][$group]['visitors'] += $profile['visitors'];
-
         // Get visitors for last week
         $prev_visitors = __::first($yesterday_last_week['data'][$group]);
         $prev_visitors = (int)$prev_visitors[$profile['profile']]['visitors'];
 
+        // Add (+) prev week's visitors to group total
         $template_data['group_totals'][$group]['prev_visitors'] += $prev_visitors;
+
+        // Add (+) visitors to group total
+        $template_data['group_totals'][$group]['visitors'] += $profile['visitors'];
     }
 
     // Calculate change
@@ -205,7 +206,9 @@ $mail->isHTML(true);
 $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
 // Form subject
-$subject  = 'Fubra Analytics (';
+$subject  = 'Fubra Analytics: ';
+$subject .= number_format($template_data['totals']['visitors']);
+$subject .= ' Visitors (';
 // Add percentage change
 $subject .= $template_data['totals']['percent_change'];
 // Add percent sign
@@ -217,15 +220,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// // Send and check for failure
-// if( ! $mail->send() ) {
+// Send and check for failure
+if( ! $mail->send() ) {
     
-//     // Send mail to owner if daily mail failed
-//     mail(
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 
