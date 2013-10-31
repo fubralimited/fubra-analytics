@@ -78,7 +78,7 @@ foreach ($yesterday['data'] as $group => $date_data) {
         $prev_visitors = floatval($prev_visitors[$profile]['visitors']);
 
         // Get current visitors and visitors chnage from prev week
-        $visitors = round(floatval($metrics['visitors']), 2 );
+        $visitors = (int)$metrics['visitors'];
 
         // Get difference
         $percent_change = \FA\Util::percent_change($prev_visitors, $visitors);
@@ -109,32 +109,30 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     $template_data['group_totals'][$group] = array(
     
         'visitors'                 => 0,
+        'prev_visitors'            => 0,
         'percent_change'           => 0
     );
 
-    // Counter
-    $i = 0;
     
+    // Add group profile visits    
     foreach ($profiles as $profile) {
         
+        // Add (+) visitors for profile 
         $template_data['group_totals'][$group]['visitors'] += $profile['visitors'];
-        
-        // Check a change is available. (Not infinty)
-        if ( $profile['percent_change'] != '&#8734;' ) {
-            
-            $template_data['group_totals'][$group]['percent_change'] += $profile['percent_change'];
 
-        // Increment
-        ++$i;
+        // Get visitors for last week
+        $prev_visitors = __::first($yesterday_last_week['data'][$group]);
+        $prev_visitors = (int)$prev_visitors[$profile['profile']]['visitors'];
 
-        }
+        $template_data['group_totals'][$group]['prev_visitors'] += $prev_visitors;
     }
 
-    // Devide averages by number of profiles (not visits)
-    if($i) $template_data['group_totals'][$group]['percent_change'] /= $i;
+    // Calculate change
+    $template_data['group_totals'][$group]['percent_change'] = \FA\Util::percent_change(
+        $template_data['group_totals'][$group]['prev_visitors'],
+        $template_data['group_totals'][$group]['visitors']
+    );
 
-    // Round avgs
-    $template_data['group_totals'][$group]['percent_change'] = (int)$template_data['group_totals'][$group]['percent_change'];
 }
 
 // Create abs totals entry
@@ -149,6 +147,9 @@ $template_data['totals'] = array(
     'percent_change'           => \FA\Util::percent_change( $visits_last_week, $visits_yesterday ),
     'page_views'               => $api->get_total_page_views($dates['yesterday'])
 );
+
+// Create record traffic entries
+
 
 
 // -------------------------------------------------------
@@ -182,7 +183,7 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 $email_html = $htmldoc->getHTML();
 
 // Minify html
-$email_html = \zz\Html\HTMLMinify::minify($email_html);
+echo $email_html = \zz\Html\HTMLMinify::minify($email_html);
 
 // New PHPMailer object
 $mail = new PHPMailer;
@@ -216,15 +217,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
+// // Send and check for failure
+// if( ! $mail->send() ) {
     
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 
