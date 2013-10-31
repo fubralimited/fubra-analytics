@@ -59,6 +59,20 @@ class API extends Data {
     }
 
     /**
+     * Returns the highest visitors ever for the given profile
+     * @param  int $profile_id
+     * @return int Number of visitors
+     */
+    public function get_record_visitors($profile_id) {
+        
+        $max = ORM::for_table('analytics_total')
+            ->where('profile_id', $profile_id)
+            ->max('visitors');
+
+        return $max;
+    }
+
+    /**
      * Return the total page views for a given date
      * @param  string $date Date for which to return data
      * @return int          Total page views
