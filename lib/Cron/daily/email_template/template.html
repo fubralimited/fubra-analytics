@@ -73,8 +73,7 @@
 				<!-- Table data labels -->
 				<tr class="legend">
 					<th>Site</th>
-					<th>Server Resp<br/><small>seconds</small></th>
-					<th>Page Load<br/><small>seconds</small></th>
+					<th>Bounce<br/>Rate<br/></th>
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
 					<th>Change<br/><small>- 7 Days</small></th>
@@ -97,26 +96,11 @@
 								<a href="<%= $metrics['url'] %>" target="_blank"><%= $metrics['profile'] %></a>
 							</td>
 
-							<!-- Server Response Time -->
-							<td <% if($metrics['avg_server_response_time']) : %>
-									style="background-color: <%= get_rgb(($metrics['avg_server_response_time'] * -1 ), 5) %>"
+							<!-- Bounce Rate -->
+							<td <% if($metrics['bounce_rate']) : %>
+									style="background-color: <%= get_rgb(($metrics['bounce_rate']*-1), 100) %>"
 								<% endif; %> >
-								<% if($metrics['avg_server_response_time']) : %>
-									<%= $metrics['avg_server_response_time'] %>
-								<% else : %>
-									<small>NA</small>
-								<% endif; %>
-							</td>
-
-							<!-- Page Load Time -->
-							<td <% if($metrics['avg_page_load_time']) : %>
-									style="background-color:<%= get_rgb(($metrics['avg_page_load_time'] * -1 ), 15) %>"
-								<% endif; %> >
-								<% if($metrics['avg_page_load_time']) : %>
-									<%= $metrics['avg_page_load_time'] %>
-								<% else : %>
-									<small>NA</small>
-								<% endif; %>
+								<%= $metrics['bounce_rate'] %>&#37;
 							</td>
 
 							<!-- Views Per Visit -->
@@ -135,7 +119,7 @@
 					<% }); %>
 
 					<tr class="totals">
-						<th></th><th></th><th></th><th></th>
+						<th></th><th></th><th></th>
 						<th class="total"><%= number_format( $data['group_totals'][$group]['visitors'] ) %></th>
 						<th class="total"><%= $data['group_totals'][$group]['percent_change'] %>%</th>
 					</tr>

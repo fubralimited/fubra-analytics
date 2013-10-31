@@ -83,6 +83,11 @@ foreach ($yesterday['data'] as $group => $date_data) {
         // Get difference
         $percent_change = \FA\Util::percent_change($prev_visitors, $visitors);
 
+        // Get bounce rate (percentage bounces vs visits)
+        $bounce_rate = $metrics['visits'] ? $metrics['bounces'] / $metrics['visits'] : 0;
+        $bounce_rate *= 100;
+        $bounce_rate = round($bounce_rate);
+
         // Format floats
         $avg_server_response_time = round(floatval($metrics['avg_server_response_time']), 1 );
         $avg_page_load_time = round(floatval($metrics['avg_page_load_time']), 1 );
@@ -97,7 +102,8 @@ foreach ($yesterday['data'] as $group => $date_data) {
                 'avg_page_load_time'       => $avg_page_load_time,
                 'visitors'                 => $visitors,
                 'percent_change'           => $percent_change,
-                'avg_views_per_visit'      => $avg_views_per_visit
+                'avg_views_per_visit'      => $avg_views_per_visit,
+                'bounce_rate'              => $bounce_rate
             );
     }
 }
@@ -220,15 +226,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
+// // Send and check for failure
+// if( ! $mail->send() ) {
     
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 
