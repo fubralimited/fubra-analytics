@@ -407,10 +407,10 @@ class Data {
         $row->visitors                 = $data['ga:visitors'];
         $row->unique_visits            = $data['ga:newVisits'];
         $row->bounces                  = $data['ga:bounces'];
-        $row->avg_views_per_visit      = $data['ga:pageviewsPerVisit'];
-        $row->avg_time_on_site         = $data['ga:avgTimeOnSite'];
-        $row->avg_page_load_time       = $data['ga:avgPageLoadTime'];
-        $row->avg_server_response_time = $data['ga:avgServerResponseTime'];
+        $row->avg_views_per_visit      = round($data['ga:pageviewsPerVisit'], 2);
+        $row->avg_time_on_site         = round($data['ga:avgTimeOnSite'], 2);
+        $row->avg_page_load_time       = round($data['ga:avgPageLoadTime'], 2);
+        $row->avg_server_response_time = round($data['ga:avgServerResponseTime'], 2);
 
         // Add metrics day
         $row->date = $date;
@@ -479,8 +479,8 @@ class Data {
             $row->visitors                 = $data[$mco['ga:visitors']];
             $row->unique_visits            = $data[$mco['ga:newVisits']];
             $row->bounces                  = $data[$mco['ga:bounces']];
-            $row->avg_views_per_visit      = $data[$mco['ga:pageviewsPerVisit']];
-            $row->avg_time_on_site         = $data[$mco['ga:avgTimeOnSite']];
+            $row->avg_views_per_visit      = round($data[$mco['ga:pageviewsPerVisit']], 2);
+            $row->avg_time_on_site         = round($data[$mco['ga:avgTimeOnSite']], 2);
 
             // Add metrics day
             $row->date = $date;
