@@ -61,12 +61,17 @@ class API extends Data {
     /**
      * Returns the highest visitors ever for the given profile
      * @param  int $profile_id
+     * @param  string $prior_to Date from which to exlude y-m-d
      * @return int Number of visitors
      */
-    public function get_record_visitors($profile_id) {
+    public function get_record_visitors($profile_id, $prior_to = NULL) {
         
+        // Use date passed in or dfault to future date so all data is included
+        $date = $prior_to ? $prior_to : date('Y-m-d', strtotime('tomorrow'));
+
         $max = ORM::for_table('analytics_total')
             ->where('profile_id', $profile_id)
+            ->where_lt('date', $date)
             ->max('visitors');
 
         return $max;

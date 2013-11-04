@@ -20,10 +20,6 @@ date_default_timezone_set($config->timezone);
 // Get api instance
 $api = new \GA\API();
 
-
-// print($api->get_total_visits('2013-10-29'));
-// die();
-
 // -------------------------------------------------------
 
 // Form dates
@@ -93,6 +89,9 @@ foreach ($yesterday['data'] as $group => $date_data) {
         $avg_page_load_time = round(floatval($metrics['avg_page_load_time']), 1 );
         $avg_views_per_visit = round(floatval($metrics['avg_views_per_visit']), 1 );
 
+        // Check if record traffic was recorded
+        $record = ( $visitors > $api->get_record_visitors($metrics['profile_id'], $dates['yesterday']) );
+
         // Create teplate data
         $template_data['profiles'][$group][] = array(
 
@@ -103,7 +102,8 @@ foreach ($yesterday['data'] as $group => $date_data) {
                 'visitors'                 => $visitors,
                 'percent_change'           => $percent_change,
                 'avg_views_per_visit'      => $avg_views_per_visit,
-                'bounce_rate'              => $bounce_rate
+                'bounce_rate'              => $bounce_rate,
+                'record'                   => $record
             );
     }
 }
