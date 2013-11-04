@@ -35,7 +35,7 @@ $yesterday = $api->get_as_groups( $dates['yesterday'] );
 $yesterday_last_week = $api->get_as_groups( $dates['yesterday_last_week'] );
 
 // Prepare data
-$template_data = array();
+$template_data = array('record' => false);
 
 // Returns a red or green rgb value based on a value and a base
 function get_rgb($val, $base) {
@@ -91,6 +91,9 @@ foreach ($yesterday['data'] as $group => $date_data) {
 
         // Check if record traffic was recorded
         $record = ( $visitors > $api->get_record_visitors($metrics['profile_id'], $dates['yesterday']) );
+
+        // Set template record field to true if a record traffic was recorded
+        if($record) $template_data['record'] = true;
 
         // Create teplate data
         $template_data['profiles'][$group][] = array(
@@ -213,8 +216,10 @@ $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
 // Form subject
 $subject  = 'Fubra Analytics: ';
+if ($template_data['record']) $subject .= 'Record ';
+$subject .= 'Visitors ';
 $subject .= number_format($template_data['totals']['visitors']);
-$subject .= ' Visitors (';
+$subject .= ' (';
 // Add percentage change
 $subject .= $template_data['totals']['percent_change'];
 // Add percent sign
@@ -226,15 +231,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// // Send and check for failure
-// if( ! $mail->send() ) {
+// Send and check for failure
+if( ! $mail->send() ) {
     
-//     // Send mail to owner if daily mail failed
-//     mail(
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 

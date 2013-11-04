@@ -18,8 +18,54 @@
 		<td></td>
 		<td class="container" bgcolor="#FFFFFF">
 
+			<!-- Content start -->
 			<div class="content">
 
+			<!-- Print record traffic table only if record traffic is set -->
+			<% if( $data['record'] ): %>
+				<h4>Record Traffic</h4>
+				<table class="data-table">
+
+					<!-- Table data labels -->
+					<tr class="legend">
+						<th>Site</th>
+						<th>Visitors</th>
+						<th>Change<br/><small>- 7 Days</small></th>
+					</tr>
+					<tr></tr>
+
+					<!-- Start data here -->
+					<% __::each( $data['profiles'], function( $profiles, $group ) use ($data) { %>
+							
+						<% __::each( $profiles, function( $metrics ){ %>
+
+							<% if( $metrics['record'] ): %>
+								<tr class="data">
+
+									<!-- Profile Name -->
+									<td class="profile">
+										<a href="<%= $metrics['url'] %>" target="_blank"><%= $metrics['profile'] %></a>
+									</td>
+
+									<!-- Visitors -->
+									<td><%= number_format( $metrics['visitors'] ) %></td>
+
+									<!-- Percent Change -->
+									<td style="background-color:<%= \FA\Util::percentage_color($metrics['percent_change']) %>">
+										<%= ($metrics['percent_change'] === 'INF') ? '&#8734;' : $metrics['percent_change'] . '&#37;' %>
+									</td>
+
+								</tr>
+							<% endif; %>
+
+						<% }); %>
+
+					<% }); %>
+
+				</table><br/>
+			<% endif; %><!-- End record traffic table -->
+
+			<!-- All sites summary table starts -->
 			<h4>All Sites</h4>
 			<table class="data-table main">
 
@@ -37,11 +83,9 @@
 					<td width="33%" style="background-color:<%= get_rgb($data['totals']['percent_change'], 100) %>"><%= $data['totals']['percent_change'] %>&#37;</td>
 				</tr>
 
+			</table><br/><!-- All sites table end -->
 
-			</table>
-
-			<br/>
-
+			<!-- Groups summary table start -->
 			<h4>Groups</h4>
 			<table class="data-table groups">
 
@@ -63,10 +107,9 @@
 				<% }); %>
 
 
-			</table>
+			</table><br/><!-- Group summary end -->
 
-			<br/>
-
+			<!-- Main sites(profiles) table start -->
 			<h4>Sites</h4>
 			<table class="data-table">
 
@@ -130,7 +173,8 @@
 
 				<% }); %>
 
-			</table>
+			</table><!-- Main sites(profiles) table end -->
+
 			</div><!-- /content -->
 									
 		</td>
