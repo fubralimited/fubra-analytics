@@ -86,7 +86,7 @@ $(function(){
         var val = $(this).val();
 
         // Update all filtered (visible) results to the selected group
-        if (val) $('tr.profile:visible select').val(val);
+        if (val !== '_ignore') $('tr.profile:visible select').val(val);
     });
 
 

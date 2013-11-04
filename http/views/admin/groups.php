@@ -132,8 +132,8 @@ $profiles = $app->api->get_profiles();
                         <select id="group_apply" class="form-control input-sm">
 
                                 <!-- Add instruction (no value) -->
-                                <option value="">Update all to:</option>
-                                <option value="none">None</option>
+                                <option value="_ignore">Update all to:</option>
+                                <option value="">None</option>
                                 <? foreach ($groups as $id => $name) : ?>
                                     <option value="<?= $id ?>"><?= $name ?></option>
                                 <? endforeach; ?>
