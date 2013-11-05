@@ -184,7 +184,7 @@ class Data {
      * @param  string  $date_end   Last day data to return
      * @return array               Metrics data
      */
-    protected function get_data( $date_start, $date_end = NULL ) {
+    public function get_data( $date_start, $date_end = NULL ) {
 
         // Get all profile ids (not ignored)
         $all_profiles = __::pluck( self::get_profiles(), 'id' );
