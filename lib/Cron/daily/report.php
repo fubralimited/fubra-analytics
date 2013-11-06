@@ -194,7 +194,7 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 $email_html = $htmldoc->getHTML();
 
 // Minify html
-echo $email_html = \zz\Html\HTMLMinify::minify($email_html);
+$email_html = \zz\Html\HTMLMinify::minify($email_html);
 
 // New PHPMailer object
 $mail = new PHPMailer;
@@ -230,15 +230,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// // Send and check for failure
-// if( ! $mail->send() ) {
-//     echo $mail->ErrorInfo;
-//     // Send mail to owner if daily mail failed
-//     mail(
+// Send and check for failure
+if( ! $mail->send() ) {
+    echo $mail->ErrorInfo;
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 
