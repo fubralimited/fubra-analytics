@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `analytics_total` (
   `avg_server_response_time` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'api_errors'
 CREATE TABLE IF NOT EXISTS `api_errors` (
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `api_errors` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `error` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=520 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'groups'
 CREATE TABLE IF NOT EXISTS `groups` (
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'options'
 CREATE TABLE IF NOT EXISTS `options` (
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `options` (
   `value` text NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Create syntax for TABLE 'profiles'
 CREATE TABLE IF NOT EXISTS `profiles` (
