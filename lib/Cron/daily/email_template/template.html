@@ -30,7 +30,7 @@
 					<tr class="legend">
 						<th>Site</th>
 						<th>Visitors</th>
-						<th>Change<br/><small>- 7 Days</small></th>
+						<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 					</tr>
 					<tr></tr>
 
@@ -73,7 +73,7 @@
 				<tr class="legend">
 					<th>Page Views</th>
 					<th>Visitors</th>
-					<th>Change<br/><small>- 7 Days</small></th>
+					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 
@@ -93,7 +93,7 @@
 				<tr class="legend">
 					<th>Group</th>
 					<th>Visitors</th>
-					<th>Change<br/><small>- 7 Days</small></th>
+					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 				<% __::each( $data['group_totals'], function( $totals, $group ) { %>
@@ -119,7 +119,7 @@
 					<th>Bounce<br/>Rate<br/></th>
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
-					<th>Change<br/><small>- 7 Days</small></th>
+					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 

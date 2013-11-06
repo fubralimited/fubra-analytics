@@ -1,5 +1,6 @@
 <?php
 
+// Suppress strict notices.
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 
 // Autoload Composer modules
@@ -216,8 +217,6 @@ $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
 // Form subject
 $subject  = 'Fubra Analytics: ';
-if ($template_data['record']) $subject .= 'Record ';
-$subject .= 'Visitors ';
 $subject .= number_format($template_data['totals']['visitors']);
 $subject .= ' (';
 // Add percentage change
@@ -231,15 +230,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
-    
-    // Send mail to owner if daily mail failed
-    mail(
+// // Send and check for failure
+// if( ! $mail->send() ) {
+//     echo $mail->ErrorInfo;
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 
