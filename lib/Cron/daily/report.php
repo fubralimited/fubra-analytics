@@ -21,6 +21,18 @@ date_default_timezone_set($config->timezone);
 // Get api instance
 $api = new \GA\API();
 
+// If application isn't authenticated alert admin and exit
+if( ! $api->authenticated ) {
+
+    mail(
+
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Error: Application not authenticated'
+    );    
+    exit();
+}
+
 // -------------------------------------------------------
 
 // Form dates
