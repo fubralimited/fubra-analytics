@@ -28,6 +28,6 @@ read -p "Are you sure you wnt to uninstall ${APP} cron jobs? (y/n)" -n 1
         $INSTALL_DIR/cron_uninstall.php
 
         # Done
-        echo -e "\n\n UNINSTALL COMPLETE!"
+        echo -e "\n\n UNINSTALL COMPLETE!\n"
 
     fi

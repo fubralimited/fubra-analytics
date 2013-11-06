@@ -7,9 +7,6 @@ require dirname(__DIR__) . '/composer/vendor/autoload.php';
 // Create crontab instance
 $crontab = new \Crontab\Crontab();
 
-// Render current crontab file
-echo $crontab->render();
-
 // Remove all existing (related) cron jobs
 foreach ( $crontab->getJobs() as $job) {
 
@@ -18,7 +15,11 @@ foreach ( $crontab->getJobs() as $job) {
     $cmd = $entries[5];
 
     // Check job is related and remove. 
-    if ( strpos($cmd, dirname(__DIR__) . '/lib/Cron' ) !== FALSE ) $crontab->removeJob($job);
+    if ( strpos($cmd, dirname(__DIR__) . '/lib/Cron' ) !== FALSE ) {
+
+        echo $job . "\n";
+        $crontab->removeJob($job);
+    }
 }
 
 // Install crontab

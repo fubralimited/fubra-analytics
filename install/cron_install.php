@@ -17,9 +17,26 @@ $cron_time = date_parse($config->report['time']);
 // Set up a jobs array
 $jobs = array();
 
+// ---------------------------- Install hourly crons ----------------------------
+foreach (glob(dirname(__DIR__) . '/lib/Cron/hourly/*.php') as $cmd) {
+
+    // Create new crontab job
+    $job = new \Crontab\Job();
+    // Configure
+    $job
+        ->setMinute('0')
+        ->setHour('*')
+        ->setDayOfMonth('*')
+        ->setMonth('*')
+        ->setDayOfWeek('*')
+        ->setCommand('php ' . $cmd)
+    ;
+
+    // Add job
+    $jobs[] = $job;
+}
 
 // ---------------------------- Install daily crons ----------------------------
-
 foreach (glob(dirname(__DIR__) . '/lib/Cron/daily/*.php') as $cmd) {
 
     // Create new crontab job
@@ -39,7 +56,6 @@ foreach (glob(dirname(__DIR__) . '/lib/Cron/daily/*.php') as $cmd) {
 }
 
 // ---------------------------- Install daily crons ----------------------------
-
 foreach (glob(dirname(__DIR__) . '/lib/Cron/weekly/*.php') as $cmd) {
 
     // Create new crontab job
@@ -59,7 +75,6 @@ foreach (glob(dirname(__DIR__) . '/lib/Cron/weekly/*.php') as $cmd) {
 }
 
 // ---------------------------- Install monthly crons ----------------------------
-
 foreach (glob(dirname(__DIR__) . '/lib/Cron/monthly/*.php') as $cmd) {
 
     // Create new crontab job
@@ -101,3 +116,4 @@ $crontab->write();
 
 // Render new crontab file
 echo $crontab->render();
+echo "\n";
