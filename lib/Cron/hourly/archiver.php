@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This job is run every hour to populate the database with past data
+ * This job is run every hour to populate the database with past data.
  */
 
 // Suppress strict notices.
@@ -10,14 +10,19 @@ error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 // Autoload Composer modules
 require dirname(__DIR__) . '/../../composer/vendor/autoload.php';
 
+// Very first action is to get the config instance and check if archiving is enabled
+
+// Get config object
+$config = new \FA\Config();
+
+// Simply exit if archiving is disabled
+if ( ! $config->archive['enabled'] ) exit();
+
 // Initialise app
 new \FA\Init();
 
 // Get options instance
 $options = new \FA\Options();
-
-// Get config object
-$config = new \FA\Config();
 
 // Set timezone
 date_default_timezone_set($config->timezone);
