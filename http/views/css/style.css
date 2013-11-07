@@ -48,3 +48,18 @@ a.auth_button{
   width: 300px;
 }
 
+.reports .month {
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #efefef;
+}
+
+.reports .month h5{
+  padding-left: 5px;
+  font-weight: bold;
+}
+
+.reports .month a {
+  width: 80px;
+  margin: 3px 1px;
+}

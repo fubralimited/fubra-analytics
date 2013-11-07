@@ -8,11 +8,11 @@
       <li><a href="/admin/profiles">Profiles</a></li>
     </ul>
   </li>
-  <li class="dropdown <?= ($route['main'] == 'email') ? 'active' : NULL ?>">
-    <a href="" class="dropdown-toggle" data-toggle="dropdown">Emails <b class="caret"></b></a>
+  <li class="dropdown <?= ($route['main'] == 'reports') ? 'active' : NULL ?>">
+    <a href="" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href="/emails/daily">Daily</a></li>
-      <li><a href="/emails/monthly">Monthly</a></li>
+      <li><a href="/reports/daily">Daily</a></li>
+      <li><a href="/reports/monthly">Monthly</a></li>
     </ul>
   </li>
 </ul>

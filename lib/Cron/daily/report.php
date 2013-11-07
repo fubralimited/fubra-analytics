@@ -208,6 +208,10 @@ $email_html = $htmldoc->getHTML();
 // Minify html
 $email_html = \zz\Html\HTMLMinify::minify($email_html);
 
+// Write report to archives directory
+$archive_path = dirname(__DIR__) . '/../../http/archives/daily/' . $dates['yesterday'] . '.html';
+file_put_contents($archive_path, $email_html);
+
 // New PHPMailer object
 $mail = new PHPMailer;
 
