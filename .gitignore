@@ -9,3 +9,6 @@ temp_*
 *.log
 logs/
 old/
+http/archives/daily/*.html
+http/archives/weekly/*.html
+http/archives/monthly/*.html
