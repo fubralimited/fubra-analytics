@@ -238,7 +238,7 @@ $subject  = 'Fubra Analytics: ';
 $subject .= number_format($template_data['totals']['visitors']);
 $subject .= ' (';
 // Add percentage change
-$subject .= $template_data['totals']['percent_change'];
+$subject .= $template_data['totals']['visitors_change'];
 // Add percent sign
 $subject .= '%) ';
 // Add date
