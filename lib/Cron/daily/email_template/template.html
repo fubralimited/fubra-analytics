@@ -140,10 +140,10 @@
 							</td>
 
 							<!-- Bounce Rate Change-->
-							<td <% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 10) ) : %>
+							<td <% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 20) ) : %>
 									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate_change'], 0, true) %>"
 								<% endif; %> >
-								<% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 10) ) : %>
+								<% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 20) ) : %>
                                         <%= $metrics['bounce_rate_change'] %>&#37;
                                 <% else : %>
                                         <small>NA</small>
