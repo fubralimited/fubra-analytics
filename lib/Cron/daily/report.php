@@ -82,25 +82,33 @@ foreach ($yesterday['data'] as $group => $date_data) {
     // Loop first value (date) in group only as only one date was requested
     foreach ( __::first($date_data) as $profile => $metrics) {
 
+        // Get prev week data set
+        $prev_metrics = __::first($yesterday_last_week['data'][$group])[$profile];
+
         // Get visitors for last week
-        $prev_visitors = __::first($yesterday_last_week['data'][$group]);
-        $prev_visitors = floatval($prev_visitors[$profile]['visitors']);
+        $prev_visitors = $prev_metrics['visitors'];
 
         // Get current visitors and visitors chnage from prev week
-        $visitors = (int)$metrics['visitors'];
+        $visitors = $metrics['visitors'];
 
         // Get difference
-        $percent_change = \FA\Util::percent_change($prev_visitors, $visitors);
+        $visitors_change = \FA\Util::percent_change($prev_visitors, $visitors);
 
-        // Get bounce rate (percentage bounces vs visits)
+        // Get prev bounce rate (bounces / visits)
+        $prev_bounce_rate = $prev_metrics['bounces'];
+        $prev_bounce_rate = $prev_metrics['visits'] ? $prev_metrics['bounces'] / $prev_metrics['visits'] : 0;
+        $prev_bounce_rate = round($prev_bounce_rate * 100);
+
+        // Get current bounce rate (bounces / visits)
+        $bounce_rate = $metrics['bounces'];
         $bounce_rate = $metrics['visits'] ? $metrics['bounces'] / $metrics['visits'] : 0;
-        $bounce_rate *= 100;
-        $bounce_rate = round($bounce_rate);
+        $bounce_rate = round($bounce_rate * 100);
 
-        // Format floats
-        $avg_server_response_time = round(floatval($metrics['avg_server_response_time']), 1 );
-        $avg_page_load_time = round(floatval($metrics['avg_page_load_time']), 1 );
-        $avg_views_per_visit = round(floatval($metrics['avg_views_per_visit']), 1 );
+        // Get difference
+        $bounce_rate_change = \FA\Util::percent_change($prev_bounce_rate, $bounce_rate);
+
+        // Round views per visit
+        $avg_views_per_visit = round($metrics['avg_views_per_visit'], 1 );
 
         // Check if record traffic was recorded
         $record = ( $visitors > $api->get_record_visitors($metrics['profile_id'], $dates['yesterday']) );
@@ -113,12 +121,10 @@ foreach ($yesterday['data'] as $group => $date_data) {
 
                 'profile'                  => $profile,
                 'url'                      => $metrics['url'],
-                'avg_server_response_time' => $avg_server_response_time,
-                'avg_page_load_time'       => $avg_page_load_time,
                 'visitors'                 => $visitors,
-                'percent_change'           => $percent_change,
+                'visitors_change'          => $visitors_change,
                 'avg_views_per_visit'      => $avg_views_per_visit,
-                'bounce_rate'              => $bounce_rate,
+                'bounce_rate_change'       => $bounce_rate_change,
                 'record'                   => $record
             );
     }
@@ -132,7 +138,7 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     
         'visitors'                 => 0,
         'prev_visitors'            => 0,
-        'percent_change'           => 0
+        'visitors_change'           => 0
     );
 
     
@@ -151,7 +157,7 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     }
 
     // Calculate change
-    $template_data['group_totals'][$group]['percent_change'] = \FA\Util::percent_change(
+    $template_data['group_totals'][$group]['visitors_change'] = \FA\Util::percent_change(
         $template_data['group_totals'][$group]['prev_visitors'],
         $template_data['group_totals'][$group]['visitors']
     );
@@ -167,13 +173,9 @@ $visits_last_week = $api->get_total_visits($dates['yesterday_last_week']);
 $template_data['totals'] = array(
 
     'visitors'                 => $api->get_total_visitors($dates['yesterday']),
-    'percent_change'           => \FA\Util::percent_change( $visits_last_week, $visits_yesterday ),
+    'visitors_change'          => \FA\Util::percent_change( $visits_last_week, $visits_yesterday ),
     'page_views'               => $api->get_total_page_views($dates['yesterday'])
 );
-
-// Create record traffic entries
-
-
 
 // -------------------------------------------------------
 
@@ -206,11 +208,11 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 $email_html = $htmldoc->getHTML();
 
 // Minify html
-$email_html = \zz\Html\HTMLMinify::minify($email_html);
+echo $email_html = \zz\Html\HTMLMinify::minify($email_html);
 
 // Write report to archives directory
-$archive_path = dirname(__DIR__) . '/../../http/archives/daily/' . $dates['yesterday'] . '.html';
-file_put_contents($archive_path, $email_html);
+// $archive_path = dirname(__DIR__) . '/../../http/archives/daily/' . $dates['yesterday'] . '.html';
+// file_put_contents($archive_path, $email_html);
 
 // New PHPMailer object
 $mail = new PHPMailer;
@@ -247,14 +249,14 @@ $mail->Subject = $subject;
 $mail->Body = $email_html;
 
 // Send and check for failure
-if( ! $mail->send() ) {
+// if( ! $mail->send() ) {
 
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 

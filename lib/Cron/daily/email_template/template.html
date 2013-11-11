@@ -30,7 +30,7 @@
 					<tr class="legend">
 						<th>Site</th>
 						<th>Visitors</th>
-						<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+						<th>Visitors Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 					</tr>
 					<tr></tr>
 
@@ -50,9 +50,9 @@
 									<!-- Visitors -->
 									<td><%= number_format( $metrics['visitors'] ) %></td>
 
-									<!-- Percent Change -->
-									<td style="background-color:<%= \FA\Util::percentage_color($metrics['percent_change']) %>">
-										<%= ($metrics['percent_change'] === 'INF') ? '&#8734;' : $metrics['percent_change'] . '&#37;' %>
+									<!-- Visitors Change -->
+									<td style="background-color:<%= \FA\Util::percentage_color($metrics['visitors_change']) %>">
+										<%= ($metrics['visitors_change'] === 'INF') ? '&#8734;' : $metrics['visitors_change'] . '&#37;' %>
 									</td>
 
 								</tr>
@@ -73,14 +73,14 @@
 				<tr class="legend">
 					<th>Page Views</th>
 					<th>Visitors</th>
-					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 
 				<tr class="data">
 					<td width="33%"><%= number_format($data['totals']['page_views']) %></td>
 					<td width="33%"><%= number_format($data['totals']['visitors']) %></td>
-					<td width="33%" style="background-color:<%= get_rgb($data['totals']['percent_change'], 100) %>"><%= $data['totals']['percent_change'] %>&#37;</td>
+					<td width="33%" style="background-color:<%= get_rgb($data['totals']['visitors_change'], 100) %>"><%= $data['totals']['visitors_change'] %>&#37;</td>
 				</tr>
 
 			</table><br/><!-- All sites table end -->
@@ -93,7 +93,7 @@
 				<tr class="legend">
 					<th>Group</th>
 					<th>Visitors</th>
-					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 				<% __::each( $data['group_totals'], function( $totals, $group ) { %>
@@ -101,7 +101,7 @@
 					<tr class="data">
 						<td class="profile"><%= $group %></td>
 						<td><%= number_format($totals['visitors']) %></td>
-						<td style="background-color:<%= get_rgb($totals['percent_change'], 100) %>"><%= $totals['percent_change'] %>&#37;</td>
+						<td style="background-color:<%= get_rgb($totals['visitors_change'], 100) %>"><%= $totals['visitors_change'] %>&#37;</td>
 					</tr>
 
 				<% }); %>
@@ -116,10 +116,10 @@
 				<!-- Table data labels -->
 				<tr class="legend">
 					<th>Site</th>
-					<th>Bounce<br/>Rate<br/></th>
+					<th>Bounce Rate &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
-					<th>Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
 				</tr>
 				<tr></tr>
 
@@ -139,12 +139,12 @@
 								<a href="<%= $metrics['url'] %>" target="_blank"><%= $metrics['profile'] %></a>
 							</td>
 
-							<!-- Bounce Rate -->
-							<td <% if( $metrics['bounce_rate'] && ($metrics['visitors'] > 10) ) : %>
-									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate'], 50, true) %>"
+							<!-- Bounce Rate Change-->
+							<td <% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 10) ) : %>
+									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate_change'], 0, true) %>"
 								<% endif; %> >
-								<% if( $metrics['bounce_rate'] && ($metrics['visitors'] > 10) ) : %>
-                                        <%= $metrics['bounce_rate'] %>&#37;
+								<% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 10) ) : %>
+                                        <%= $metrics['bounce_rate_change'] %>&#37;
                                 <% else : %>
                                         <small>NA</small>
                                 <% endif; %>
@@ -156,9 +156,9 @@
 							<!-- Visitors -->
 							<td><%= number_format( $metrics['visitors'] ) %></td>
 
-							<!-- Percent Change -->
-							<td style="background-color:<%= \FA\Util::percentage_color($metrics['percent_change']) %>">
-								<%= ($metrics['percent_change'] === 'INF') ? '&#8734;' : $metrics['percent_change'] . '&#37;' %>
+							<!-- Visitors Change -->
+							<td style="background-color:<%= \FA\Util::percentage_color($metrics['visitors_change']) %>">
+								<%= ($metrics['visitors_change'] === 'INF') ? '&#8734;' : $metrics['visitors_change'] . '&#37;' %>
 							</td>
 
 						</tr>						
@@ -168,7 +168,7 @@
 					<tr class="totals">
 						<th></th><th></th><th></th>
 						<th class="total"><%= number_format( $data['group_totals'][$group]['visitors'] ) %></th>
-						<th class="total"><%= $data['group_totals'][$group]['percent_change'] %>%</th>
+						<th class="total"><%= $data['group_totals'][$group]['visitors_change'] %>%</th>
 					</tr>
 
 				<% }); %>
