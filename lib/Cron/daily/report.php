@@ -248,7 +248,7 @@ $mail->Body = $email_html;
 
 // Send and check for failure
 if( ! $mail->send() ) {
-    echo $mail->ErrorInfo;
+
     // Send mail to owner if daily mail failed
     mail(
 
