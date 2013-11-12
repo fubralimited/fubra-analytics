@@ -117,6 +117,7 @@
 				<tr class="legend">
 					<th>Site</th>
 					<th>Bounce Rate &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Bounce Rate</th>
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
 					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
@@ -140,13 +141,22 @@
 							</td>
 
 							<!-- Bounce Rate Change-->
-							<td <% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 20) ) : %>
+							<td <% if( ($metrics['visitors'] > 20) ) : %>
 									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate_change'], 0, true) %>"
 								<% endif; %> >
-								<% if( $metrics['bounce_rate_change'] && ($metrics['visitors'] > 20) ) : %>
+								<% if( ($metrics['visitors'] > 20) ) : %>
                                         <%= $metrics['bounce_rate_change'] %>&#37;
                                 <% else : %>
                                         <small>NA</small>
+                                <% endif; %>
+							</td>
+
+							<!-- Bounce Rate -->
+							<td>
+								<% if( ($metrics['visitors'] > 20) ) : %>
+                                    <%= $metrics['bounce_rate'] %>&#37;
+                                <% else : %>
+                                    <small>NA</small>
                                 <% endif; %>
 							</td>
 
@@ -166,7 +176,7 @@
 					<% }); %>
 
 					<tr class="totals">
-						<th></th><th></th><th></th>
+						<th></th><th></th><th></th><th></th>
 						<th class="total"><%= number_format( $data['group_totals'][$group]['visitors'] ) %></th>
 						<th class="total"><%= $data['group_totals'][$group]['visitors_change'] %>%</th>
 					</tr>

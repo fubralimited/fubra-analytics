@@ -124,6 +124,7 @@ foreach ($yesterday['data'] as $group => $date_data) {
                 'visitors'                 => $visitors,
                 'visitors_change'          => $visitors_change,
                 'avg_views_per_visit'      => $avg_views_per_visit,
+                'bounce_rate'              => $bounce_rate,
                 'bounce_rate_change'       => $bounce_rate_change,
                 'record'                   => $record
             );
