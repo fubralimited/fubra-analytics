@@ -145,7 +145,7 @@
 									style="background-color: <%= \FA\Util::percentage_color($metrics['bounce_rate_change'], 0, true) %>"
 								<% endif; %> >
 								<% if( ($metrics['visitors'] > 20) ) : %>
-                                        <%= $metrics['bounce_rate_change'] %>&#37;
+                                    <%= ($metrics['bounce_rate_change'] === 'INF') ? '&#8734;' : $metrics['bounce_rate_change'] . '&#37;' %>
                                 <% else : %>
                                         <small>NA</small>
                                 <% endif; %>
