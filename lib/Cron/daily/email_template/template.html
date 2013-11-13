@@ -80,7 +80,9 @@
 				<tr class="data">
 					<td width="33%"><%= number_format($data['totals']['page_views']) %></td>
 					<td width="33%"><%= number_format($data['totals']['visitors']) %></td>
-					<td width="33%" style="background-color:<%= get_rgb($data['totals']['visitors_change'], 100) %>"><%= $data['totals']['visitors_change'] %>&#37;</td>
+					<td width="33%" style="background-color:<%= \FA\Util::percentage_color($data['totals']['visitors_change']) %>">
+						<%= $data['totals']['visitors_change'] %>&#37;
+					</td>
 				</tr>
 
 			</table><br/><!-- All sites table end -->
@@ -101,7 +103,7 @@
 					<tr class="data">
 						<td class="profile"><%= $group %></td>
 						<td><%= number_format($totals['visitors']) %></td>
-						<td style="background-color:<%= get_rgb($totals['visitors_change'], 100) %>"><%= $totals['visitors_change'] %>&#37;</td>
+						<td style="background-color:<%= \FA\Util::percentage_color($totals['visitors_change']) %>"><%= $totals['visitors_change'] %>&#37;</td>
 					</tr>
 
 				<% }); %>

@@ -38,8 +38,8 @@ if( ! $api->authenticated ) {
 // Form dates
 $dates = array(
 
-    'yesterday'             => date('Y-m-d', strtotime('yesterday')),
-    'yesterday_last_week'   => date('Y-m-d', strtotime('yesterday - 7 days'))
+    'yesterday'           => date('Y-m-d', strtotime('yesterday')),
+    'yesterday_last_week' => date('Y-m-d', strtotime('yesterday - 7 days'))
     );
 
 
@@ -49,32 +49,6 @@ $yesterday_last_week = $api->get_as_groups( $dates['yesterday_last_week'] );
 
 // Prepare data
 $template_data = array('record' => false);
-
-// Returns a red or green rgb value based on a value and a base
-function get_rgb($val, $base) {
-
-    // Get absolute value
-    $abs = abs($val);
-
-    // Set no more than base value
-    if ($abs >= $base) $abs = $base;
-
-    // Calculate percentage of 255
-    $var_c = round( ($abs/$base) * 255 );
-
-    // Get remaing value of 255
-    $remain = round( (255 - $var_c) );
-
-    // Check if val is positive then use green else use red
-    $rgb = ($val < 0) ? array( 255, $remain, $remain ) : array( $remain , 255, $remain );
-
-    $hex = "#";
-    $hex .= str_pad(dechex($rgb[0]), 2, "0", STR_PAD_LEFT);
-    $hex .= str_pad(dechex($rgb[1]), 2, "0", STR_PAD_LEFT);
-    $hex .= str_pad(dechex($rgb[2]), 2, "0", STR_PAD_LEFT);
-
-    return $hex; // returns the hex value including the shebang
-}
 
 // Loop groups
 foreach ($yesterday['data'] as $group => $date_data) {
@@ -209,7 +183,7 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 $email_html = $htmldoc->getHTML();
 
 // Minify html
-$email_html = \zz\Html\HTMLMinify::minify($email_html);
+echo $email_html = \zz\Html\HTMLMinify::minify($email_html);
 
 // Write report to archives directory
 $archive_path = dirname(__DIR__) . '/../../http/archives/daily/' . $dates['yesterday'] . '.html';
@@ -249,15 +223,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// Send and check for failure
-if( ! $mail->send() ) {
+// // Send and check for failure
+// if( ! $mail->send() ) {
 
-    // Send mail to owner if daily mail failed
-    mail(
+//     // Send mail to owner if daily mail failed
+//     mail(
 
-        $config->admin,
-        $config->product_name . ' daily cron failed',
-        'Mailer Error: ' . $mail->ErrorInfo
-    );
-}
+//         $config->admin,
+//         $config->product_name . ' daily cron failed',
+//         'Mailer Error: ' . $mail->ErrorInfo
+//     );
+// }
 
