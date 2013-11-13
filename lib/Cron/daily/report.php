@@ -183,7 +183,7 @@ foreach ( glob( __DIR__ . '/email_template/*.css') as $css ) {
 $email_html = $htmldoc->getHTML();
 
 // Minify html
-echo $email_html = \zz\Html\HTMLMinify::minify($email_html);
+$email_html = \zz\Html\HTMLMinify::minify($email_html);
 
 // Write report to archives directory
 $archive_path = dirname(__DIR__) . '/../../http/archives/daily/' . $dates['yesterday'] . '.html';
@@ -223,15 +223,15 @@ $mail->Subject = $subject;
 // Set message body
 $mail->Body = $email_html;
 
-// // Send and check for failure
-// if( ! $mail->send() ) {
+// Send and check for failure
+if( ! $mail->send() ) {
 
-//     // Send mail to owner if daily mail failed
-//     mail(
+    // Send mail to owner if daily mail failed
+    mail(
 
-//         $config->admin,
-//         $config->product_name . ' daily cron failed',
-//         'Mailer Error: ' . $mail->ErrorInfo
-//     );
-// }
+        $config->admin,
+        $config->product_name . ' daily cron failed',
+        'Mailer Error: ' . $mail->ErrorInfo
+    );
+}
 
