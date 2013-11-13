@@ -222,8 +222,8 @@ $mail = new PHPMailer;
 $mail->isMail();
 
 // Add sender
-$mail->From = 'analytics@fubra.com';
-$mail->FromName = 'Fubra Analytics';
+$mail->From = $config->product_email;
+$mail->FromName = $config->product_name;
 
   // Add a recipient
 $mail->addAddress($config->report['email']);
