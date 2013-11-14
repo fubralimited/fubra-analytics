@@ -181,7 +181,7 @@ class Data {
      * Gets metrics for a given day or range
      * If data does not exist in database, do an api call
      * @param  string  $date_start First (or only) day to return
-     * @param  string  $date_end   Last day data to return
+     * @param  string  $date_end   Last day data to return (past date)
      * @param  bool   $mobile Boolean whether to include mobile data
      * @return array               Metrics data
      */
@@ -298,7 +298,7 @@ class Data {
      * @param  string $date_end   Last date - included
      * @return array             Array of dates between start and finish
      */
-    private static function get_days ($date_start, $date_end){
+    private static function get_days ($date_end, $date_start){
     
         // Firstly, format the provided dates.
         // This function works best with YYYY-MM-DD
@@ -398,6 +398,12 @@ class Data {
         return $data;
     }
 
+    /**
+     * Get tablet, phone and combined mobile data for a given day and profile
+     * @param  int    $profile_id
+     * @param  string $date       Date in format Y-m-d
+     * @return array              Array of tablet, phone and combined data
+     */
     private static function get_mobile_data($profile_id, $date) {
 
         // Create return array
