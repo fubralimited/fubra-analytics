@@ -392,8 +392,25 @@ class Data {
             }
         }
 
-        // Return metric
-        return $data;
+        // Return metrics with indexes changed to profile ids
+        return self::convert_index_to_ids($data);
+    }
+
+    /**
+     * Set a data array to have prifile ids as keys instead of default indexes
+     * @param  array $data get_data result
+     * @return array       Sorted data array
+     */
+    private static function convert_index_to_ids($data) {
+
+        // Newly sorted data
+        $new_data = array();
+
+        // Loop and change array indexes to profile ids
+        foreach ($data as $key => $metrics) $new_data[$metrics['profile_id']] = $metrics;
+
+        // Return sorted array
+        return $new_data;
     }
 
     /**
