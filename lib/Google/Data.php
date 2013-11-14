@@ -57,9 +57,7 @@ class Data {
         'ga:newVisits',
         'ga:bounces',
         'ga:pageviewsPerVisit',
-        'ga:avgTimeOnSite',
-        'ga:avgPageLoadTime',
-        'ga:avgServerResponseTime'
+        'ga:avgTimeOnSite'
     );
 
     /**
@@ -467,8 +465,6 @@ class Data {
         $row->bounces                  = $data['ga:bounces'];
         $row->avg_views_per_visit      = round($data['ga:pageviewsPerVisit'], 2);
         $row->avg_time_on_site         = round($data['ga:avgTimeOnSite'], 2);
-        $row->avg_page_load_time       = round($data['ga:avgPageLoadTime'], 2);
-        $row->avg_server_response_time = round($data['ga:avgServerResponseTime'], 2);
 
         // Add metrics day
         $row->date = $date;

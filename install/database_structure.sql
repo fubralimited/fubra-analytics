@@ -47,8 +47,6 @@ CREATE TABLE IF NOT EXISTS `analytics_total` (
   `bounces` int(11) DEFAULT NULL,
   `avg_views_per_visit` double DEFAULT NULL,
   `avg_time_on_site` double DEFAULT NULL,
-  `avg_page_load_time` double DEFAULT NULL,
-  `avg_server_response_time` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
