@@ -182,9 +182,10 @@ class Data {
      * If data does not exist in database, do an api call
      * @param  string  $date_start First (or only) day to return
      * @param  string  $date_end   Last day data to return
+     * @param  bool   $mobile Boolean whether to include mobile data
      * @return array               Metrics data
      */
-    public function get_data( $date_start, $date_end = NULL ) {
+    public function get_data( $date_start, $date_end = NULL, $mobile = false ) {
 
         // Get all profile ids (not ignored)
         $all_profiles = __::pluck( self::get_profiles(), 'id' );
@@ -199,7 +200,7 @@ class Data {
         foreach ($days as $day) {
 
             // Get data from day from db
-            $data = self::get_metric( $day );
+            $data = self::get_metric( $day, $mobile );
 
             // Get all profile ids with data
             $updated_profiles = __::pluck( $data, 'profile_id' );
@@ -217,7 +218,7 @@ class Data {
                 if ( count($api_errors) ) $res['errors'][] = $api_errors;
                 
                 // Get data again
-                $data = self::get_metric( $day );
+                $data = self::get_metric( $day, $mobile );
             }
 
             // Set data
@@ -359,11 +360,10 @@ class Data {
     /**
      * Retreives a single day's data for all profiles
      * Skips ignored entries
-     * @param  string $day Date of data to retreive. "Y-m-d"
-     * @param  array  $ids Array of profile ids to retreive data for
-     * @return array      Array of database results
+     * @param  string $day    Date of data to retreive. "Y-m-d"
+     * @return array          Array of database results
      */
-    private static function get_metric( $day ) {
+    private static function get_metric( $date, $mobile ) {
 
         // Get valid profiles
         $profiles = self::get_profiles();
@@ -376,11 +376,63 @@ class Data {
 
         // Get metrics for all valid profiles
         $data = ORM::for_table('analytics_total')
-            ->where( 'date', $day )
+            ->where( 'date', $date )
             ->where_in('profile_id', $profile_ids)
             ->find_array();
 
+        // Check if mobile data needs adding to totals
+        if ( $mobile && $data ) {
+
+            // Get mobile data for each profile
+            foreach ($data as $key => $metrics) {
+
+                // Get mobile data
+                $mobile_data = self::get_mobile_data($metrics['profile_id'], $date);
+
+                // Merge with profile metrics
+                $data[$key] = array_merge($metrics, $mobile_data);
+            }
+        }
+
         // Return metric
+        return $data;
+    }
+
+    private static function get_mobile_data($profile_id, $date) {
+
+        // Create return array
+        $data = array();
+
+        // Get mobile (phone) data
+        $data['mobile_phone'] = __::first( ORM::for_table('analytics_mobile')
+            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit', 'avg_time_on_site')
+            ->where('date', $date)
+            ->where('profile_id', $profile_id)
+            ->find_array() );
+
+        // Get tablet data
+        $data['mobile_tablet'] = __::first( ORM::for_table('analytics_tablet')
+            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit', 'avg_time_on_site')
+            ->where('date', $date)
+            ->where('profile_id', $profile_id)
+            ->find_array() );
+
+        // Add a combined version of the data
+        if ($data['mobile_phone'] && $data['mobile_tablet']) {
+            
+            // Add mobile and tablet to get totals
+            $data['mobile_total']['visits']              = $data['mobile_phone']['visits'] + $data['mobile_tablet']['visits'];
+            $data['mobile_total']['visitors']            = $data['mobile_phone']['visitors'] + $data['mobile_tablet']['visitors'];
+            $data['mobile_total']['unique_visits']       = $data['mobile_phone']['unique_visits'] + $data['mobile_tablet']['unique_visits'];
+            $data['mobile_total']['bounces']             = $data['mobile_phone']['bounces'] + $data['mobile_tablet']['bounces'];
+
+            // Get avg totals
+            $data['mobile_total']['avg_views_per_visit'] = round(($data['mobile_phone']['avg_views_per_visit'] + $data['mobile_tablet']['avg_views_per_visit'])/2 , 1);
+            $data['mobile_total']['avg_time_on_site']    = round(($data['mobile_phone']['avg_time_on_site'] + $data['mobile_tablet']['avg_time_on_site'])/2 , 1);
+        
+        // Else simply set to the total to also be false
+        } else { $data['mobile_total'] = false; }
+        
         return $data;
     }
 
