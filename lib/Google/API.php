@@ -69,55 +69,67 @@ class API extends Data {
      */
     public function get_data_as_totals( $from, $to, $mobile = false ) {
 
+        // New array for sorted totals
         $new_data = array();
 
-        // First get data
+        // Get data
         $data = $this->get_data( $from, $to, $mobile );
 
         // Check number of days to calculate avgs
         $avg_del = count($data['data']);
 
         // Now sort data in totals
+
+        // Loop dates
         foreach ($data['data'] as $date => $profiles) {
 
+            // Loop each profile in date
             foreach ($profiles as $profile_id => $metrics) {
 
+                // Loop each metric in profile
                 foreach ($metrics as $metric => $value) {
 
-
-                    // If value is an array, perform another iteration
+                    // If value is an array, perform another iteration as this is a mobile field with it's own metrics
                     if ( is_array($value) ) {
 
+                        // Add mobile values
                         foreach ($value as $m_metric => $m_value) {
-
                             $new_data[$profile_id][$metric][$m_metric] += $m_value;
                         }
 
-                    // Else if value isn falsy, simply add
+                    // Else if value isn falsy, simply add as it's not a mobile field, but an absolute metrics
                     } else if ( $value ) {
-
                         $new_data[$profile_id][$metric] += $value;
                     }
                 }
             }
         }
 
-        // Calculate avgs
+        // Calculate avgs in new_data array
+
+        // Loop profiles. Dates no longer exist
         foreach ($new_data as $profile_id => $metrics) {
 
+            // Loop each profiles metrics
             foreach ($metrics as $metric => $value) {
 
+                // Check if metric is of an average kind
                 if (in_array($metric, array('avg_views_per_visit', 'avg_time_on_site'))) {
                     
+                    // Set to rounded avg by deviding by the total number of days originally requested
                     $avg = round($value / $avg_del, 1);
                     $new_data[$profile_id][$metric] = $avg;
                 
+                // If another array is found then it's a mobile value and needs to be iterated again
                 } else if ( is_array($value) ) {
                     
+                    // Same iteration as 2 levels up
                     foreach ($value as $m_metric => $m_value) {
                         
+                        // Again check if mobile metric is of average type
                         if (in_array($m_metric, array('avg_views_per_visit', 'avg_time_on_site'))) {
 
+                            // Set to rounded avg by deviding by the total number of days originally requested
                             $avg = round($m_value / $avg_del, 1);
                             $new_data[$profile_id][$metric][$m_metric] = $avg;
                         }
@@ -126,6 +138,7 @@ class API extends Data {
             }
         }
 
+        // All done! Return totals array
         return $new_data;
     }
 
