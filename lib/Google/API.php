@@ -15,7 +15,7 @@ class API extends Data {
      * Sorted into group -> date -> profile
      * @return array Data array
      */
-    public function get_as_groups( $from, $to = NULL ) {
+    public function get_data_as_groups( $from, $to = NULL, $mobile = false ) {
 
         // Get raw data from data class
         $data_raw = $this->get_data($from, $to);
@@ -57,6 +57,79 @@ class API extends Data {
         // Return sorted data
         return $data;        
     }
+
+
+    /**
+     * Get a range of data ( from - to ) as a single result with totals and averages
+     * Heavily dependand on the structure of the db, so any db name changes etc. will cause it to fail badly.
+     * @param  string  $from   Dates Y-m-d
+     * @param  string  $to     Dates Y-m-d
+     * @param  boolean $mobile Whether to include mobile data
+     * @return array           Final array of totals data
+     */
+    public function get_data_as_totals( $from, $to, $mobile = false ) {
+
+        $new_data = array();
+
+        // First get data
+        $data = $this->get_data( $from, $to, $mobile );
+
+        // Check number of days to calculate avgs
+        $avg_del = count($data['data']);
+
+        // Now sort data in totals
+        foreach ($data['data'] as $date => $profiles) {
+
+            foreach ($profiles as $profile_id => $metrics) {
+
+                foreach ($metrics as $metric => $value) {
+
+
+                    // If value is an array, perform another iteration
+                    if ( is_array($value) ) {
+
+                        foreach ($value as $m_metric => $m_value) {
+
+                            $new_data[$profile_id][$metric][$m_metric] += $m_value;
+                        }
+
+                    // Else if value isn falsy, simply add
+                    } else if ( $value ) {
+
+                        $new_data[$profile_id][$metric] += $value;
+                    }
+                }
+            }
+        }
+
+        // Calculate avgs
+        foreach ($new_data as $profile_id => $metrics) {
+
+            foreach ($metrics as $metric => $value) {
+
+                if (in_array($metric, array('avg_views_per_visit', 'avg_time_on_site'))) {
+                    
+                    $avg = round($value / $avg_del, 1);
+                    $new_data[$profile_id][$metric] = $avg;
+                
+                } else if ( is_array($value) ) {
+                    
+                    foreach ($value as $m_metric => $m_value) {
+                        
+                        if (in_array($m_metric, array('avg_views_per_visit', 'avg_time_on_site'))) {
+
+                            $avg = round($m_value / $avg_del, 1);
+                            $new_data[$profile_id][$metric][$m_metric] = $avg;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $new_data;
+    }
+
+
 
     /**
      * Returns the highest visitors ever for the given profile
