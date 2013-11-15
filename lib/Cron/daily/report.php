@@ -44,8 +44,8 @@ $dates = array(
 
 
 // Get data
-$yesterday = $api->get_as_groups( $dates['yesterday'] );
-$yesterday_last_week = $api->get_as_groups( $dates['yesterday_last_week'] );
+$yesterday = $api->get_data_as_groups( $dates['yesterday'] );
+$yesterday_last_week = $api->get_data_as_groups( $dates['yesterday_last_week'] );
 
 // Prepare data
 $template_data = array('record' => false);
