@@ -31,6 +31,15 @@ if (isset($_POST['group_update'])) {
     $status_state = 'alert-success';
 }
 
+// Check groups order has been updated
+if (isset($_POST['groups_order'])) {
+    
+    // Update profile groups
+    $app->api->update_groups_order($_POST['groups_order']);
+    $status_message = 'Groups order updated';
+    $status_state = 'alert-success';
+}
+
 // Get groups
 $groups = $app->api->get_groups();
 
@@ -44,6 +53,38 @@ $profiles = $app->api->get_profiles();
 
 <div class="row">
 
+    <!-- Group sorting table -->
+    <div class="col-md-6">
+
+        <div class="panel panel-default groups">
+          <div class="panel-heading">
+            <h3 class="panel-title">Order groups</h3>
+          </div>
+          <div class="panel-body">
+
+            <ul class='groups_order sortable list-group'>
+                <? foreach ($groups as $id => $name) : ?>
+                    <li class="list-group-item" data-id="<?= $id ?>"><?= $name ?></li>
+                <? endforeach; ?>
+            </ul>
+
+            <form role="form" method="POST" action="" class="groups_order form-inline" >
+                <input type="hidden" name="groups_order">
+                <? $i = 0; ?>
+                <? foreach ($groups as $id => $name) : ?>
+                    <input class="group_<?= $id ?>" type="hidden" name="groups_order[<?= $id ?>]" value="<?= $i ?>">
+                    <? $i++ ?>
+                <? endforeach; ?>
+              <button type="submit" class="btn btn-info">Update</button>
+            </form>
+
+          </div>
+
+        </div>
+
+    </div>
+
+    <!-- New group panel -->
     <div class="col-md-6">
         <div class="panel panel-default groups">
           <div class="panel-heading">
@@ -62,7 +103,9 @@ $profiles = $app->api->get_profiles();
         </div>
     </div>
 
+    <!-- Remove group panel -->
     <div class="col-md-6">
+
         <div class="panel panel-default groups">
           <div class="panel-heading">
             <h3 class="panel-title">Delete group</h3>
@@ -81,6 +124,7 @@ $profiles = $app->api->get_profiles();
             </form>
           </div>
         </div>
+
     </div>
 
 </div>

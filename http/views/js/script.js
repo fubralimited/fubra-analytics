@@ -1,5 +1,30 @@
 $(function(){
 
+    // Init any soratbles
+    $("ul.sortable").sortable({
+
+        placeholder: '<li class="placeholder list-group-item"/>',
+
+        onDragStart: function (item) {
+            item.addClass("dragged");
+            $("body").addClass("dragging");
+        },
+
+        onDrop: function (item) {
+
+            item.removeClass("dragged").removeAttr("style");
+            $("body").removeClass("dragging");
+
+            $('ul.groups_order li').each(function( ind ){
+
+                var id = $(this).data('id');
+                
+                $('form.groups_order .group_' + id).val(ind);
+            });
+        }
+
+    });
+
     // Cahce some dom elements
     var groupFilterEl     = $('#group_filter'),
         profileFilterEl   = $('#profile_filter')

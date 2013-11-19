@@ -18,6 +18,34 @@ body {
   padding: 0 0 60px;
 }
 
+/* Sortable plugin css
+-------------------------------------------------- */
+
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+  border: none;
+  background-color: #777;
+  color: #fff;
+}
+
+ul.sortable .list-group-item {
+  height: 40px;
+}
+
+ul.sortable li:hover {
+  cursor: pointer;
+}
+
+ul.sortable li.placeholder {
+  height: 40px;
+  background-color: #EFEFEF;
+}
 
 /* Custom page CSS
 -------------------------------------------------- */

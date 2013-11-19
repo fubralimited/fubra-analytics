@@ -72,5 +72,8 @@
     <!-- Load custom script -->
     <script src="/views/js/script.js"></script>
 
+    <!-- jQuery sortable plugin -->
+    <script src='/views/js/jquery-sortable.js'></script>
+
   </body>
 </html>

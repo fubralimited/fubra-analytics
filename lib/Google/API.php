@@ -54,8 +54,8 @@ class API extends Data {
             }
         }
 
-        // Sort data by groups
-        $groups = array_flip($this->get_groups());
+        // Get groups and order
+        $groups = $this->get_group_orders();
 
         // Sort groups by db order
         $x = uksort($data['data'], function($a, $b) use ( $groups ) {
@@ -71,6 +71,23 @@ class API extends Data {
 
         // Return sorted data
         return $data;        
+    }
+
+    /**
+     * Returns group => order array
+     * @return array group => order
+     */
+    public function get_group_orders() {
+
+        // Get groups ordered by 'order' column
+        $groups_db = ORM::for_table('groups')->order_by_asc('order')->find_array();
+
+        // Sort groups in name=>order array
+        $groups = array();
+
+        foreach ($groups_db as $group) $groups[$group['name']] = $group['order'];
+
+        return $groups;
     }
 
 
@@ -155,6 +172,26 @@ class API extends Data {
 
         // All done! Return totals array
         return $new_data;
+    }
+
+    /**
+     * Updates group orders
+     * @param  array $order Array of group ids => new order
+     */
+    public static function update_groups_order($order) {
+        
+        // Loop new group orders
+        foreach ($order as $group_id => $order) {
+
+            // Get group by id
+            $group = ORM::for_table('groups')->find_one($group_id);
+
+            // Update order column
+            $group->order = (int)$order;
+
+            // Save
+            $group->save();
+        }
     }
 
     /**
@@ -397,9 +434,7 @@ class API extends Data {
         // Sort groups in id=>name array
         $groups = array();
 
-        foreach ($groups_db as $group) {
-            $groups[$group['id']] = $group['name'];
-        }
+        foreach ($groups_db as $group) $groups[$group['id']] = $group['name'];
 
         return $groups;
     }
