@@ -54,6 +54,21 @@ class API extends Data {
             }
         }
 
+        // Sort data by groups
+        $groups = array_flip($this->get_groups());
+
+        // Sort groups by db order
+        $x = uksort($data['data'], function($a, $b) use ( $groups ) {
+
+            if ( $groups[$a] === $groups[$b] ) return 0;
+            return ($groups[$a] < $groups[$b]) ? -1 : 1;
+        });
+
+        // Move Misc to last in array
+        $misc = $data['data']['Misc'];
+        unset($data['data']['Misc']);
+        $data['data']['Misc'] = $misc;
+
         // Return sorted data
         return $data;        
     }
@@ -141,8 +156,6 @@ class API extends Data {
         // All done! Return totals array
         return $new_data;
     }
-
-
 
     /**
      * Returns the highest visitors ever for the given profile
@@ -379,7 +392,7 @@ class API extends Data {
      */
     public function get_groups() {
 
-        $groups_db = ORM::for_table('groups')->find_array();
+        $groups_db = ORM::for_table('groups')->order_by_asc('order')->find_array();
 
         // Sort groups in id=>name array
         $groups = array();
