@@ -176,6 +176,23 @@ class Data {
     }
 
     /**
+     * Formats any given date into the correct Y-m-d
+     * @param  mixed $date Date passed to api
+     * @return string      Date converted ( or not ) into the Y-m-d format
+     */
+    private static function check_date($date) {
+
+        // Check if date is in format Y-m-d
+        if (preg_match('/\d{4}-\d{2}-\d{2}/', $date) ) return $date;
+
+        // Else if date is a string format date into Y-m-d using strtotime
+        if (is_string($date)) return date('Y-m-d', strtotime($date));
+        
+        // Finally assume timestamp, so simply format
+        return date('Y-m-d', $date);
+    }
+
+    /**
      * Gets metrics for a given day or range
      * If data does not exist in database, do an api call
      * @param  string  $date_start First (or only) day to return
@@ -184,6 +201,10 @@ class Data {
      * @return array               Metrics data
      */
     public function get_data( $date_start, $date_end = NULL, $mobile = false ) {
+
+        // Format dates
+        $date_start = self::check_date($date_start);
+        $date_end = $date_end ? self::check_date($date_end) : NULL;
 
         // Get all profile ids (not ignored)
         $all_profiles = __::pluck( self::get_profiles(), 'id' );
