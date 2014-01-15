@@ -152,6 +152,7 @@ $template_data['totals'] = array(
     'page_views'               => $api->get_total_page_views($dates['yesterday'])
 );
 
+
 // -------------------------------------------------------
 
 // Use https://github.com/christiaan/InlineStyle to convert email template files to a single email template
@@ -168,7 +169,6 @@ $html = __::template($html, array(
         'date'    => $dates['yesterday'],
         'data'    => $template_data
 ));
-
 
 // Create new inline instance
 $htmldoc = new \InlineStyle\InlineStyle($html);
@@ -209,15 +209,23 @@ $mail->isHTML(true);
 $mail->AddCustomHeader("Content-Type: text/html; charset=UTF-8");
 
 // Form subject
-$subject  = 'Fubra Analytics: ';
-$subject .= number_format($template_data['totals']['visitors']);
-$subject .= ' (';
-// Add percentage change
-$subject .= $template_data['totals']['visitors_change'];
-// Add percent sign
-$subject .= '%) ';
+// 99,999 visitors for Sat Dec 28th, +9% on previous week
+
+// Add visitors
+$subject  = number_format($template_data['totals']['visitors']);
+$subject .= ' visitors for ';
+
 // Add date
 $subject .= date('D, M jS', strtotime('yesterday'));
+$subject .= ', ';
+
+// Add percentage change
+$subject .= $template_data['totals']['visitors_change'];
+
+// Add percent sign
+$subject .= '% on previous week';
+
+// Set subject
 $mail->Subject = $subject;
 
 // Set message body
