@@ -228,9 +228,6 @@ $subject .= $template_data['totals']['visitors_change'];
 // Add percent sign
 $subject .= '% on previous week';
 
-echo $subject;
-die();
-
 // Set subject
 $mail->Subject = $subject;
 
