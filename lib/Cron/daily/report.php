@@ -29,7 +29,7 @@ if( ! $api->authenticated ) {
         $config->admin,
         $config->product_name . ' daily cron failed',
         'Error: Application not authenticated'
-    );    
+    );
     exit();
 }
 
@@ -52,7 +52,7 @@ $template_data = array('record' => false);
 
 // Loop groups
 foreach ($yesterday['data'] as $group => $date_data) {
-    
+
     // Loop first value (date) in group only as only one date was requested
     foreach ( __::first($date_data) as $profile => $metrics) {
 
@@ -84,6 +84,9 @@ foreach ($yesterday['data'] as $group => $date_data) {
         // Round views per visit
         $avg_views_per_visit = round($metrics['avg_views_per_visit'], 1 );
 
+        // Get effective visitors
+        $effective_visitors = round( $visitors * ( (100 - $bounce_rate ) / 100 ));
+
         // Check if record traffic was recorded
         $record = ( $visitors > $api->get_record_visitors($metrics['profile_id'], $dates['yesterday']) );
 
@@ -100,7 +103,8 @@ foreach ($yesterday['data'] as $group => $date_data) {
                 'avg_views_per_visit'      => $avg_views_per_visit,
                 'bounce_rate'              => $bounce_rate,
                 'bounce_rate_change'       => $bounce_rate_change,
-                'record'                   => $record
+                'record'                   => $record,
+                'effective_visitors'       => $effective_visitors
             );
     }
 }
@@ -110,16 +114,17 @@ foreach ($template_data['profiles'] as $group => $profiles) {
 
     // Create totals entry
     $template_data['group_totals'][$group] = array(
-    
+
         'visitors'                 => 0,
         'prev_visitors'            => 0,
-        'visitors_change'           => 0
+        'visitors_change'           => 0,
+        'effective_visitors'           => 0
     );
 
-    
-    // Add group profile visits    
+
+    // Add group profile visits
     foreach ($profiles as $profile) {
-        
+
         // Get visitors for last week
         $prev_visitors = __::first($yesterday_last_week['data'][$group]);
         $prev_visitors = (int)$prev_visitors[$profile['profile']]['visitors'];
@@ -129,6 +134,9 @@ foreach ($template_data['profiles'] as $group => $profiles) {
 
         // Add (+) visitors to group total
         $template_data['group_totals'][$group]['visitors'] += $profile['visitors'];
+
+        // Add effective visitors
+        $template_data['group_totals'][$group]['effective_visitors'] += $profile['effective_visitors'];
     }
 
     // Calculate change

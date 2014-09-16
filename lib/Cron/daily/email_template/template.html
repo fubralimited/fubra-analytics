@@ -123,12 +123,13 @@
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
 					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Effective Visitors</th>
 				</tr>
 				<tr></tr>
 
 				<!-- Start data here -->
 				<% __::each( $data['profiles'], function( $profiles, $group ) use ($data) { %>
-						
+
 					<tr class="group">
 						<th colspan="6"><%= $group %></th>
 					</tr>
@@ -173,7 +174,12 @@
 								<%= ($metrics['visitors_change'] === 'INF') ? '&#8734;' : $metrics['visitors_change'] . '&#37;' %>
 							</td>
 
-						</tr>						
+							<!-- Effective Visitors -->
+							<td>
+								<%= $metrics['effective_visitors'] %>
+							</td>
+
+						</tr>
 
 					<% }); %>
 
@@ -181,6 +187,7 @@
 						<th></th><th></th><th></th><th></th>
 						<th class="total"><%= number_format( $data['group_totals'][$group]['visitors'] ) %></th>
 						<th class="total"><%= $data['group_totals'][$group]['visitors_change'] %>%</th>
+						<th class="total"><%= number_format( $data['group_totals'][$group]['effective_visitors'] ) %></th>
 					</tr>
 
 				<% }); %>
@@ -188,7 +195,7 @@
 			</table><!-- Main sites(profiles) table end -->
 
 			</div><!-- /content -->
-									
+
 		</td>
 		<td></td>
 	</tr>
