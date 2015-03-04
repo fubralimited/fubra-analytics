@@ -286,13 +286,15 @@ class Data {
 
         $data = array(
             'sessions' => 0,
-            'bounces' => 0
+            'bounces' => 0,
+            'pageviews' => 0
             );
 
         $local_metrics = array(
 
             'ga:sessions',
-            'ga:bounces'
+            'ga:bounces',
+            'ga:pageviews'
         );
 
         // Crete query string from metrics array
@@ -327,9 +329,9 @@ class Data {
             }
 
             // Add totals
+            $data['pageviews'] += intval($metric['totalsForAllResults']['ga:pageviews']);
             $data['sessions'] += intval($metric['totalsForAllResults']['ga:sessions']);
             $data['bounces'] += intval($metric['totalsForAllResults']['ga:bounces']);
-
         }
 
         // Store metrics in database if avaialble
@@ -340,6 +342,7 @@ class Data {
         // Set rows data
         $row->sessions = $data['sessions'];
         $row->bounces  = $data['bounces'];
+        $row->pageviews  = $data['pageviews'];
         $row->path     = $path;
 
         // Add metrics day

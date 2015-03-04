@@ -46,13 +46,14 @@ $data = $api->get_airport_path_data($date);
 $archive_path = dirname(__DIR__) . '/../../http/archives/airport_guides/' . $date . '.csv';
 
 // Write csv headers
-file_put_contents( $archive_path, "Path,Sessions,Bounces\r\n" );
+file_put_contents( $archive_path, "Path,Pageviews,Sessions,Bounces\r\n" );
 
 // Write csv rows
 foreach ($data as $path_data) {
 
     // Format csv line
     $line  = $path_data['path'] . ',';
+    $line .= $path_data['pageviews'] . ',';
     $line .= $path_data['sessions'] . ',';
     $line .= $path_data['bounces'] . "\r\n";
 
@@ -70,8 +71,12 @@ $mail->isMail();
 $mail->From = $config->product_email;
 $mail->FromName = $config->product_name;
 
-// Add a recipient
-$mail->addAddress($config->report['email']);
+// Add recipients
+foreach ( explode(',', $config->report['ag_emails']) as $email) {
+
+    // Add a recipient
+    $mail->addAddress(trim($email));
+}
 
 // Add report as attachment
 $mail->addAttachment($archive_path, "ag_report_{$date}.csv");
@@ -80,7 +85,7 @@ $mail->addAttachment($archive_path, "ag_report_{$date}.csv");
 $mail->Subject = 'Airport Guides Content Report - ' . date('D, M jS', strtotime('yesterday'));
 
 // Set message body
-$mail->Body = "Please find yesterday's Airport Guides content report attached.\nAlternitively visit http://analytics.fubra.com/reports/airport_guides for archived reports.";
+$mail->Body = "Please find yesterday's Airport Guides content report attached.\n\nAlternitively visit http://analytics.fubra.com/reports/airport_guides for archived reports.";
 
 // Send and check for failure
 if( ! $mail->send() ) {
