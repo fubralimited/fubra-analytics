@@ -21,6 +21,16 @@ CREATE TABLE IF NOT EXISTS `analytics_mobile` (
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'airport_guides'
+CREATE TABLE IF NOT EXISTS `airport_guides` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `path` varchar(255) NOT NULL DEFAULT '',
+  `sessions` int(11) DEFAULT NULL,
+  `bounces` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 -- Create syntax for TABLE 'analytics_tablet'
 CREATE TABLE IF NOT EXISTS `analytics_tablet` (
   `id` int(11) unsigned NOT NULL,

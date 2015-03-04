@@ -12,7 +12,7 @@
     <a href="" class="dropdown-toggle" data-toggle="dropdown">Reports <b class="caret"></b></a>
     <ul class="dropdown-menu">
       <li><a href="/reports/daily">Daily</a></li>
-      <li><a href="/reports/monthly">Monthly</a></li>
+      <li><a href="/reports/airport_guides">Airport Guides</a></li>
     </ul>
   </li>
 </ul>

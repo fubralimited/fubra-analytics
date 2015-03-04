@@ -13,3 +13,4 @@ old/
 http/archives/daily/*.html
 http/archives/weekly/*.html
 http/archives/monthly/*.html
+http/archives/airport_guides/*.csv

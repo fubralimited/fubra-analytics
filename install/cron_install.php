@@ -53,6 +53,9 @@ foreach (glob(dirname(__DIR__) . '/lib/Cron/daily/*.php') as $cmd) {
 
     // Add job
     $jobs[] = $job;
+
+    // Increment next job by one hour
+    $cron_time['hour'] = intval($cron_time['hour']) + 1;
 }
 
 // ---------------------------- Install daily crons ----------------------------

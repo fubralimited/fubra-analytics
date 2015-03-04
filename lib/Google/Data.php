@@ -249,6 +249,127 @@ class Data {
     }
 
     /**
+     * Requests data from API for specific url.
+     * Data can be requested for a day only.
+     * All sites are updated.
+     * 
+     * @param  string  $date   Date of data to retreive. Ideally with php format "Y-m-d"
+     * @return int Return false if all api calls was succesfull or an int for the number of api errors.
+     *             API errors can be retreived with get_api_errors()
+     */
+    private function get_api_data_for_airport_guide_paths( $date, $path ) {
+
+        // Normalize path
+        $path = trim($path);
+        if ($path[0] != '/') $path = '/'.$path;
+
+        // Set table
+        $p = ORM::for_table('profiles');
+
+        // Get ag's matches
+        $p->where_like( 'name', '%airport-guide%' );
+
+        // Filter ignored profiles unless set to be included
+        $p->where( 'ignored', false );
+
+        // Get profiles array
+        $profiles = $p->select('id')->find_array();
+
+        $profiles = __::pluck($profiles, 'id');
+
+        // This can take long, so remove timeout
+        set_time_limit(0);
+
+        // Passing dates through strtotime to ensure leading 0's are added and generally well formed as api is very strict
+        $start_date = date( 'Y-m-d', strtotime( $date ));
+        $end_date = date( 'Y-m-d', strtotime( $date ));
+
+        $data = array(
+            'sessions' => 0,
+            'bounces' => 0
+            );
+
+        $local_metrics = array(
+
+            'ga:sessions',
+            'ga:bounces'
+        );
+
+        // Crete query string from metrics array
+        $metric_query = implode(',', $local_metrics);
+
+        // Loop all profiles and get day data
+        foreach ( $profiles as $id) {
+
+            // Api resonse data
+            $metric = NULL;
+
+            // Track number of api errors
+            $api_errors = array();
+
+            // Try tp get data from api and store to in db
+            try {
+
+                $metric = $this->service->data_ga->get(
+                    "ga:{$id}", $start_date, $end_date, $metric_query,
+                    array( 'filters' => 'ga:pagePath=='.$path )
+                );
+
+            // Exception is not a standard php exception, but a google_service exception hence the getMessage()
+            } catch ( \Exception $e ) {
+
+                // Add to errors
+                $api_errors[] = $e->getMessage();
+
+                // Write to db
+                $this->log_api_error( $e->getMessage() );
+
+            }
+
+            // Add totals
+            $data['sessions'] += intval($metric['totalsForAllResults']['ga:sessions']);
+            $data['bounces'] += intval($metric['totalsForAllResults']['ga:bounces']);
+
+        }
+
+        // Store metrics in database if avaialble
+
+        // Create entry
+        $row = ORM::for_table('airport_guides')->create();
+
+        // Set rows data
+        $row->sessions = $data['sessions'];
+        $row->bounces  = $data['bounces'];
+        $row->path     = $path;
+
+        // Add metrics day
+        $row->date = $date;
+
+        // Store metrics
+        $row->save();
+
+        // Return only errors if any
+        return $api_errors;
+    }
+
+    /**
+     * Return all airport path data for a given date
+     * @param  string $date   Date of data to retreive. "Y-m-d"
+     * @return array          Array of database results
+     */
+    public function get_airport_path_data($date) {
+
+        // Get paths
+        $paths = explode( ',', $this->config->report['ag_paths'] );
+
+        // Loop paths and get data
+        foreach ($paths as $path) $this->get_api_data_for_airport_guide_paths( $date, $path );
+
+        // Return collective db entry
+        return ORM::for_table('airport_guides')->where('date', $date)->find_array();
+    }
+
+    /**
      * Requests data from API.
      * Data can be requested for a day only.
      * All sites are updated.
