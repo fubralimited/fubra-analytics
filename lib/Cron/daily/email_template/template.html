@@ -9,7 +9,7 @@
 <title><%= $config->product_name %></title>
 
 </head>
- 
+
 <body bgcolor="#FFFFFF">
 
 <!-- BODY -->
@@ -30,13 +30,13 @@
 					<tr class="legend">
 						<th>Site</th>
 						<th>Visitors</th>
-						<th>Visitors Change<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+						<th>Visitors Change<br/><small><%= date('d M Y', strtotime('yesterday - 1 year')) %></small></th>
 					</tr>
 					<tr></tr>
 
 					<!-- Start data here -->
 					<% __::each( $data['profiles'], function( $profiles, $group ) use ($data) { %>
-							
+
 						<% __::each( $profiles, function( $metrics ){ %>
 
 							<% if( $metrics['record'] ): %>
@@ -73,7 +73,7 @@
 				<tr class="legend">
 					<th>Page Views</th>
 					<th>Visitors</th>
-					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('d M Y', strtotime('yesterday - 1 year')) %></small></th>
 				</tr>
 				<tr></tr>
 
@@ -95,7 +95,7 @@
 				<tr class="legend">
 					<th>Group</th>
 					<th>Visitors</th>
-					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('d M Y', strtotime('yesterday - 1 year')) %></small></th>
 				</tr>
 				<tr></tr>
 				<% __::each( $data['group_totals'], function( $totals, $group ) { %>
@@ -118,11 +118,11 @@
 				<!-- Table data labels -->
 				<tr class="legend">
 					<th>Site</th>
-					<th>Bounce Rate &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Bounce Rate &#916;<br/><small><%= date('d M Y', strtotime('yesterday - 1 year')) %></small></th>
 					<th>Bounce Rate</th>
 					<th>Page Views<br/>per Visit</th>
 					<th>Visitors</th>
-					<th>Visitors &#916;<br/><small><%= date('D jS', strtotime('yesterday - 7 days')) %></small></th>
+					<th>Visitors &#916;<br/><small><%= date('d M Y', strtotime('yesterday - 1 year')) %></small></th>
 					<th>Effective<br/>Visitors</th>
 				</tr>
 				<tr></tr>
@@ -206,7 +206,7 @@
 	<tr>
 		<td></td>
 		<td class="container">
-			
+
 				<!-- content -->
 				<div class="content">
 				<table>
@@ -219,7 +219,7 @@
 				</tr>
 			</table>
 				</div><!-- /content -->
-				
+
 		</td>
 		<td></td>
 	</tr>

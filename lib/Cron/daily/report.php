@@ -39,13 +39,13 @@ if( ! $api->authenticated ) {
 $dates = array(
 
     'yesterday'           => date('Y-m-d', strtotime('yesterday')),
-    'yesterday_last_week' => date('Y-m-d', strtotime('yesterday - 7 days'))
+    'yesterday_last_year' => date('Y-m-d', strtotime('yesterday - 1 year'))
     );
 
 
 // Get data
 $yesterday = $api->get_data_as_groups( $dates['yesterday'] );
-$yesterday_last_week = $api->get_data_as_groups( $dates['yesterday_last_week'] );
+$yesterday_last_year = $api->get_data_as_groups( $dates['yesterday_last_year'] );
 
 // Prepare data
 $template_data = array('record' => false);
@@ -57,7 +57,7 @@ foreach ($yesterday['data'] as $group => $date_data) {
     foreach ( __::first($date_data) as $profile => $metrics) {
 
         // Get prev week data set
-        $prev_metrics = __::first($yesterday_last_week['data'][$group])[$profile];
+        $prev_metrics = __::first($yesterday_last_year['data'][$group])[$profile];
 
         // Get visitors for last week
         $prev_visitors = $prev_metrics['visitors'];
@@ -126,7 +126,7 @@ foreach ($template_data['profiles'] as $group => $profiles) {
     foreach ($profiles as $profile) {
 
         // Get visitors for last week
-        $prev_visitors = __::first($yesterday_last_week['data'][$group]);
+        $prev_visitors = __::first($yesterday_last_year['data'][$group]);
         $prev_visitors = (int)$prev_visitors[$profile['profile']]['visitors'];
 
         // Add (+) prev week's visitors to group total
@@ -151,7 +151,7 @@ foreach ($template_data['profiles'] as $group => $profiles) {
 
 // Get total visits for the two dates
 $visits_yesterday = $api->get_total_visits($dates['yesterday']);
-$visits_last_week = $api->get_total_visits($dates['yesterday_last_week']);
+$visits_last_week = $api->get_total_visits($dates['yesterday_last_year']);
 
 $template_data['totals'] = array(
 
@@ -234,7 +234,7 @@ if($template_data['totals']['visitors_change'] > 0) $subject .= '+';
 $subject .= $template_data['totals']['visitors_change'];
 
 // Add percent sign
-$subject .= '% on previous week';
+$subject .= '% on previous year';
 
 // Set subject
 $mail->Subject = $subject;
@@ -253,4 +253,3 @@ if( ! $mail->send() ) {
         'Mailer Error: ' . $mail->ErrorInfo
     );
 }
-

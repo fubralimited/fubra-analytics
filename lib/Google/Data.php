@@ -56,8 +56,7 @@ class Data {
         'ga:visitors',
         'ga:newVisits',
         'ga:bounces',
-        'ga:pageviewsPerVisit',
-        'ga:avgTimeOnSite'
+        'ga:pageviewsPerVisit'
     );
 
     /**
@@ -571,14 +570,14 @@ class Data {
 
         // Get mobile (phone) data
         $data['mobile_phone'] = __::first( ORM::for_table('analytics_mobile')
-            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit', 'avg_time_on_site')
+            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit')
             ->where('date', $date)
             ->where('profile_id', $profile_id)
             ->find_array() );
 
         // Get tablet data
         $data['mobile_tablet'] = __::first( ORM::for_table('analytics_tablet')
-            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit', 'avg_time_on_site')
+            ->select_many('visits', 'visitors', 'unique_visits', 'bounces', 'avg_views_per_visit')
             ->where('date', $date)
             ->where('profile_id', $profile_id)
             ->find_array() );
@@ -594,7 +593,6 @@ class Data {
 
             // Get avg totals
             $data['mobile_total']['avg_views_per_visit'] = round(($data['mobile_phone']['avg_views_per_visit'] + $data['mobile_tablet']['avg_views_per_visit'])/2 , 1);
-            $data['mobile_total']['avg_time_on_site']    = round(($data['mobile_phone']['avg_time_on_site'] + $data['mobile_tablet']['avg_time_on_site'])/2 , 1);
         
         // Else simply set to the total to also be false
         } else { $data['mobile_total'] = false; }
@@ -626,7 +624,6 @@ class Data {
         $row->unique_visits            = $data['ga:newVisits'];
         $row->bounces                  = $data['ga:bounces'];
         $row->avg_views_per_visit      = round($data['ga:pageviewsPerVisit'], 2);
-        $row->avg_time_on_site         = round($data['ga:avgTimeOnSite'], 2);
 
         // Add metrics day
         $row->date = $date;
@@ -696,7 +693,6 @@ class Data {
             $row->unique_visits            = $data[$mco['ga:newVisits']];
             $row->bounces                  = $data[$mco['ga:bounces']];
             $row->avg_views_per_visit      = round($data[$mco['ga:pageviewsPerVisit']], 2);
-            $row->avg_time_on_site         = round($data[$mco['ga:avgTimeOnSite']], 2);
 
             // Add metrics day
             $row->date = $date;

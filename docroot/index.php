@@ -57,7 +57,7 @@ $app->map( '/(:main(/(:sub(/))))', function ($main = 'dashboard', $sub = 'index'
 		$template = "{$main}/{$sub}.php";
 
 		// If view doesn't exist, pass route. Next route should then be 404
-		if( ! file_exists("views/{$main}/{$sub}.php") ) $app->pass();
+		if( ! file_exists(dirname(__FILE__). "/views/{$main}/{$sub}.php") ) $app->pass();
 
 		// Render view
 		$app->render("index.php", array(
@@ -82,7 +82,6 @@ $app->map( '/(:main(/(:sub(/))))', function ($main = 'dashboard', $sub = 'index'
  * Not found handler
  */
 $app->notFound( function () use ( $app ) {
-
 		// Render view
 		$app->render("index.php", array(
 

@@ -10,7 +10,7 @@ temp_*
 *.log
 logs/
 old/
-http/archives/daily/*.html
-http/archives/weekly/*.html
-http/archives/monthly/*.html
-http/archives/airport_guides/*.csv
+docroot/archives/daily/*.html
+docroot/archives/weekly/*.html
+docroot/archives/monthly/*.html
+docroot/archives/airport_guides/*.csv
